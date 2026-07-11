@@ -4,8 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Package, Boxes, ClipboardList, ArrowLeft } from "lucide-react";
-import { useAuth, selectIsSignedIn } from "@/stores/auth";
-import { useHydrated } from "@/lib/use-hydrated";
+import { useUser } from "@/lib/supabase/use-user";
 import { cn } from "@/lib/utils";
 
 const nav = [
@@ -15,23 +14,23 @@ const nav = [
 ];
 
 /**
- * Admin chrome + access guard. For the mock UI the guard only checks the mock
- * session; the real gate is the Laravel `EnsureAdmin` middleware (`is_admin`),
- * and Phase 10 wires this to the authenticated user's admin flag.
+ * Admin chrome + access guard. This only checks that a real Supabase session
+ * exists — the actual admin gate is the Laravel `EnsureAdmin` middleware
+ * (`is_admin`), and Phase 10 wires the admin screens to it.
  */
 export function AdminShell({ children }: { children: React.ReactNode }) {
-  const hydrated = useHydrated();
-  const isSignedIn = useAuth(selectIsSignedIn);
+  const { user, loading } = useUser();
+  const isSignedIn = !!user;
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
-    if (hydrated && !isSignedIn) {
+    if (!loading && !isSignedIn) {
       router.replace(`/login?redirectTo=${encodeURIComponent(pathname)}`);
     }
-  }, [hydrated, isSignedIn, pathname, router]);
+  }, [loading, isSignedIn, pathname, router]);
 
-  if (!hydrated || !isSignedIn) {
+  if (loading || !isSignedIn) {
     return (
       <div className="flex flex-1 items-center justify-center py-20">
         <p className="text-muted-foreground text-sm">Loading admin…</p>

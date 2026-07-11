@@ -180,7 +180,7 @@ Frontend Supabase client stores/refreshes the session
 Every API call: Authorization: Bearer <access JWT>
         ↓
 Laravel VerifySupabaseJwt middleware:
-  – verifies signature (SUPABASE_JWT_SECRET, HS256; alg allowlist)
+  – verifies signature against Supabase's JWKS (ES256; alg allowlist per key)
   – checks exp and aud ("authenticated")
   – finds-or-creates local users row keyed by supabase_id (the `sub` claim),
     syncing email/name on first sight
@@ -193,6 +193,7 @@ Route middleware authorizes: auth-only routes, `EnsureAdmin` for /admin/*
 - Laravel never stores passwords and has no login routes. Password reset, email verification, OAuth — all Supabase.
 - Admin status is the `is_admin` boolean on the local `users` table, set manually in the DB for MVP. It is **never** derived from JWT claims or frontend state. The admin UI hides itself for non-admins, but the API middleware is the real gate.
 - Reject tokens with unexpected `alg`, missing `sub`, or expired `exp`. Never decode-without-verify.
+- Supabase's current default signs access tokens asymmetrically (ES256) and publishes public keys at `{SUPABASE_URL}/auth/v1/.well-known/jwks.json` — no shared secret lives in `backend/.env`. (Older projects may still use a legacy HS256 shared secret; confirm which your project issues — decode a real token's header — before assuming either.)
 - The frontend Supabase client is used for auth **only** — never for table reads/writes.
 
 ---
@@ -299,7 +300,7 @@ FRONTEND_URL=                   # CORS origin + Paystack callback base
 DB_CONNECTION=pgsql
 DB_HOST= DB_PORT= DB_DATABASE= DB_USERNAME= DB_PASSWORD=   # Supabase today,
                                                            # self-hosted later
-SUPABASE_JWT_SECRET=            # Supabase dashboard → API → JWT secret
+SUPABASE_URL=                   # project URL; derives the JWKS endpoint used to verify tokens
 PAYSTACK_SECRET_KEY=
 PAYSTACK_PUBLIC_KEY=
 ```

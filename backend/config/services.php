@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    'supabase' => [
+        // Project URL — used to derive the JWKS endpoint for verifying
+        // Supabase's asymmetrically-signed (ES256) access tokens (CLAUDE.md §6).
+        'url' => env('SUPABASE_URL'),
+    ],
+
+    'paystack' => [
+        'secret' => env('PAYSTACK_SECRET_KEY'),
+        'public' => env('PAYSTACK_PUBLIC_KEY'),
+    ],
+
 ];

@@ -90,14 +90,14 @@ check off tasks as they land. Conventions live in `CLAUDE.md` — read it before
 
 ## Phase 7 — Authentication
 
-- [ ] 7.1 Supabase dashboard: enable Email+Password and Google providers (Google OAuth client via Google Cloud Console); set site URL + redirect URLs for local dev.
-- [ ] 7.2 Frontend: create Supabase browser/server clients in `lib/supabase/`; implement session handling (middleware for token refresh per current `@supabase/ssr` guidance).
-- [ ] 7.3 Wire the real login/register forms: sign-up, sign-in, sign-out, Google OAuth redirect flow, error states, `redirectTo` handling back to checkout.
-- [ ] 7.4 Add a `useUser`/session hook and header account state (Sign in ↔ account menu with Orders + Sign out).
-- [ ] 7.5 Backend: implement `VerifySupabaseJwt` middleware — verify HS256 signature with `SUPABASE_JWT_SECRET`, check `exp` + `aud`, alg allowlist; find-or-create local `users` row from `sub`/`email`; bind to request.
-- [ ] 7.6 Implement `EnsureAdmin` middleware (403 unless `is_admin`); protect route groups (`auth` for orders/checkout, `auth+admin` for `/admin/*`).
-- [ ] 7.7 Pest tests: valid token passes, expired/tampered/missing token → 401, non-admin on admin route → 403, first-request user auto-provisioning.
-- [ ] 7.8 Commit: "Phase 7 — Supabase auth end-to-end".
+- [x] 7.1 Supabase dashboard: Email+Password enabled (confirmed via live sign-up). **Google OAuth deferred** — no code changes needed later, dashboard toggle only (CLAUDE.md §1).
+- [x] 7.2 Frontend: create Supabase browser/server clients in `lib/supabase/`; implement session handling (`proxy.ts` token refresh — Next.js 16 renamed `middleware.ts` → `proxy.ts`).
+- [x] 7.3 Wire the real login/register forms: sign-up, sign-in, sign-out, error states, `redirectTo` handling back to checkout. Google OAuth button deferred with the rest of 7.1.
+- [x] 7.4 Add a `useUser` session hook and header account state (Sign in ↔ account menu with Orders + Sign out).
+- [x] 7.5 Backend: implement `VerifySupabaseJwt` middleware — verify signature via Supabase's JWKS (ES256, this project's actual signing method — not the legacy HS256 shared secret; CLAUDE.md §6 updated), check `exp` + `aud`, alg allowlist per key; find-or-create local `users` row from `sub`/`email`; bind to request.
+- [x] 7.6 Implement `EnsureAdmin` middleware (403 unless `is_admin`); registered as route-middleware aliases (`auth.supabase`, `admin`) in `bootstrap/app.php` — applied to real route groups in Phase 8.
+- [x] 7.7 Pest tests: valid token passes, expired/tampered/missing/unknown-kid/wrong-alg token → 401, non-admin on admin route → 403, first-request user auto-provisioning, admin not de-escalated on repeat sign-in.
+- [x] 7.8 Commit: "Phase 7 — Supabase auth end-to-end".
 
 ## Phase 8 — REST API
 

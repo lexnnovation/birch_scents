@@ -5,18 +5,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { User } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth } from "@/stores/auth";
-import { useHydrated } from "@/lib/use-hydrated";
+import { useUser } from "@/lib/supabase/use-user";
+import { createClient } from "@/lib/supabase/client";
 
 /**
- * Header account control. Signed-out → link to sign in. Signed-in → a small
- * menu with orders + sign out. Backed by the mock session store (Phase 7 swaps
- * it for the real Supabase session and a fuller account menu).
+ * Header account control, backed by the real Supabase session (CLAUDE.md
+ * §6). Signed-out → link to sign in. Signed-in → a small menu with orders
+ * + sign out.
  */
 export function AccountButton() {
-  const hydrated = useHydrated();
-  const email = useAuth((s) => s.email);
-  const signOut = useAuth((s) => s.signOut);
+  const { user, loading } = useUser();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -37,8 +35,8 @@ export function AccountButton() {
     };
   }, [open]);
 
-  // Before hydration, render a stable link so markup matches the server.
-  if (!hydrated || !email) {
+  // Before the session check resolves, render a stable link so markup matches the server.
+  if (loading || !user) {
     return (
       <Link href="/login" aria-label="Sign in" className="hidden md:inline-flex">
         <User className="size-5" />
@@ -46,8 +44,8 @@ export function AccountButton() {
     );
   }
 
-  function onSignOut() {
-    signOut();
+  async function onSignOut() {
+    await createClient().auth.signOut();
     setOpen(false);
     toast.success("Signed out");
     router.push("/");
@@ -70,7 +68,7 @@ export function AccountButton() {
           role="menu"
           className="border-border bg-card absolute top-full right-0 z-50 mt-3 w-52 rounded-xl border p-1.5 shadow-[0_18px_40px_-18px_rgba(0,0,0,0.4)]"
         >
-          <p className="text-muted-foreground truncate px-2.5 py-1.5 text-xs">{email}</p>
+          <p className="text-muted-foreground truncate px-2.5 py-1.5 text-xs">{user.email}</p>
           <Link
             href="/orders"
             role="menuitem"

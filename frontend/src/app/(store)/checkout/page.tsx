@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart, cartSubtotal } from "@/stores/cart";
 import { useOrders } from "@/stores/orders";
-import { useAuth, selectIsSignedIn } from "@/stores/auth";
+import { useUser } from "@/lib/supabase/use-user";
 import { useHydrated } from "@/lib/use-hydrated";
 import { buildOrder } from "@/lib/checkout";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,8 @@ export default function CheckoutPage() {
   const items = useCart((s) => s.items);
   const clear = useCart((s) => s.clear);
   const addOrder = useOrders((s) => s.addOrder);
-  const isSignedIn = useAuth(selectIsSignedIn);
+  const { user, loading: authLoading } = useUser();
+  const isSignedIn = !!user;
   const router = useRouter();
 
   const [form, setForm] = useState<Form>({
@@ -43,12 +44,12 @@ export default function CheckoutPage() {
 
   // Auth gate: signed-out shoppers are routed to sign in, then back to checkout.
   useEffect(() => {
-    if (hydrated && !isSignedIn) {
+    if (!authLoading && !isSignedIn) {
       router.replace(`/login?redirectTo=${encodeURIComponent("/checkout")}`);
     }
-  }, [hydrated, isSignedIn, router]);
+  }, [authLoading, isSignedIn, router]);
 
-  if (!hydrated || !isSignedIn) {
+  if (!hydrated || authLoading || !isSignedIn) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
         <p className="text-muted-foreground text-sm">Loading checkout…</p>

@@ -24,7 +24,11 @@ return new class extends Migration
         });
 
         // Stock can never go negative (CLAUDE.md §7 — enforced in code + DB).
-        DB::statement('ALTER TABLE product_variants ADD CONSTRAINT product_variants_stock_non_negative CHECK (stock >= 0)');
+        // Postgres only: SQLite (used by the Pest test suite) has no
+        // `ALTER TABLE ADD CONSTRAINT`; app-level validation covers it there.
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            DB::statement('ALTER TABLE product_variants ADD CONSTRAINT product_variants_stock_non_negative CHECK (stock >= 0)');
+        }
     }
 
     public function down(): void
