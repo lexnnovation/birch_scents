@@ -164,8 +164,18 @@ function AuthField({
   return (
     <div>
       <Label htmlFor={id}>{label}</Label>
-      <Input id={id} aria-invalid={!!error} className="mt-1.5 h-10" {...rest} />
-      {error && <p className="text-destructive mt-1 text-xs">{error}</p>}
+      <Input
+        id={id}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
+        className="mt-1.5 h-10"
+        {...rest}
+      />
+      {error && (
+        <p id={`${id}-error`} className="text-destructive mt-1 text-xs">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

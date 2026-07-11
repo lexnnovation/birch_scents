@@ -207,10 +207,15 @@ function Field({
         value={value}
         onChange={onChange}
         aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
         className="mt-1.5"
         {...rest}
       />
-      {error && <p className="text-destructive mt-1 text-xs">{error}</p>}
+      {error && (
+        <p id={`${id}-error`} className="text-destructive mt-1 text-xs">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
