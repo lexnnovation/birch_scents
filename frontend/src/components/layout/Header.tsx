@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Search, User } from "lucide-react";
+import { Search } from "lucide-react";
 import { MobileNav } from "./MobileNav";
+import { AccountButton } from "./AccountButton";
 import { CartButton } from "@/components/cart/CartButton";
 
 export const primaryNav = [
@@ -42,9 +43,7 @@ export function Header() {
           <button aria-label="Search" className="md:hidden">
             <Search className="size-5" />
           </button>
-          <Link href="/orders" aria-label="Account" className="hidden md:inline-flex">
-            <User className="size-5" />
-          </Link>
+          <AccountButton />
           <CartButton />
         </div>
       </div>

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart, cartSubtotal } from "@/stores/cart";
 import { useOrders } from "@/stores/orders";
+import { useAuth, selectIsSignedIn } from "@/stores/auth";
 import { useHydrated } from "@/lib/use-hydrated";
 import { buildOrder } from "@/lib/checkout";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ export default function CheckoutPage() {
   const items = useCart((s) => s.items);
   const clear = useCart((s) => s.clear);
   const addOrder = useOrders((s) => s.addOrder);
+  const isSignedIn = useAuth(selectIsSignedIn);
   const router = useRouter();
 
   const [form, setForm] = useState<Form>({
@@ -38,6 +40,21 @@ export default function CheckoutPage() {
   const subtotal = cartSubtotal(list);
   const delivery = subtotal === 0 || subtotal >= FREE_OVER ? 0 : DELIVERY_FEE;
   const total = subtotal + delivery;
+
+  // Auth gate: signed-out shoppers are routed to sign in, then back to checkout.
+  useEffect(() => {
+    if (hydrated && !isSignedIn) {
+      router.replace(`/login?redirectTo=${encodeURIComponent("/checkout")}`);
+    }
+  }, [hydrated, isSignedIn, router]);
+
+  if (!hydrated || !isSignedIn) {
+    return (
+      <div className="mx-auto max-w-lg px-4 py-20 text-center">
+        <p className="text-muted-foreground text-sm">Loading checkout…</p>
+      </div>
+    );
+  }
 
   if (hydrated && list.length === 0 && !placing) {
     return (
