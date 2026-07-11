@@ -7,6 +7,7 @@ import type { Product, ProductVariant } from "@/types";
 import { Button } from "@/components/ui/button";
 import { formatPesewas, discountPercent } from "@/lib/money";
 import { cn } from "@/lib/utils";
+import { useCart } from "@/stores/cart";
 
 /**
  * Purchase panel — size selector, quantity, price, and add-to-cart. The add
@@ -18,11 +19,24 @@ export function BuyPanel({ product }: { product: Product }) {
     product.variants.find((v) => v.isActive && v.stock > 0) ?? product.variants[0];
   const [variant, setVariant] = useState<ProductVariant>(firstActive);
   const [qty, setQty] = useState(1);
+  const addItem = useCart((s) => s.add);
 
   const pct = discountPercent(variant.pricePesewas, variant.compareAtPesewas);
   const outOfStock = !variant.isActive || variant.stock <= 0;
 
   function add() {
+    addItem(
+      {
+        variantId: variant.id,
+        productId: product.id,
+        productSlug: product.slug,
+        productName: product.name,
+        variantLabel: variant.label,
+        imageUrl: product.imageUrl,
+        unitPricePesewas: variant.pricePesewas,
+      },
+      qty,
+    );
     toast.success(`Added ${qty} × ${product.name} (${variant.label}) to cart`);
   }
 

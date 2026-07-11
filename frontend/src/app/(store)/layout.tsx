@@ -2,6 +2,7 @@ import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 
 export default function StoreLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +14,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
       {/* clears the floating mobile tab bar */}
       <div className="h-20 md:hidden" />
       <MobileTabBar />
+      <CartDrawer />
     </>
   );
 }

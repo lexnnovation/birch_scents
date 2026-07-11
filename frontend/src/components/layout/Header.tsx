@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Search, User, ShoppingBag } from "lucide-react";
+import { Search, User } from "lucide-react";
 import { MobileNav } from "./MobileNav";
+import { CartButton } from "@/components/cart/CartButton";
 
 export const primaryNav = [
   { label: "Shop All", href: "/shop" },
@@ -44,10 +45,7 @@ export function Header() {
           <Link href="/orders" aria-label="Account" className="hidden md:inline-flex">
             <User className="size-5" />
           </Link>
-          <Link href="/cart" aria-label="Cart" className="inline-flex items-center gap-1.5">
-            <ShoppingBag className="size-5" />
-            <span className="text-sm tabular-nums">0</span>
-          </Link>
+          <CartButton />
         </div>
       </div>
 
