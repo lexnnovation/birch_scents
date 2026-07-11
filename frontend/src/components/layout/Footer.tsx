@@ -16,7 +16,7 @@ const helpLinks = [
 
 export function Footer() {
   return (
-    <footer className="border-border bg-secondary/40 mt-24 border-t">
+    <footer className="site-footer bg-background text-foreground border-border mt-24 border-t">
       <div className="mx-auto grid max-w-[1240px] gap-10 px-4 py-14 md:grid-cols-4 md:px-8">
         <div className="md:col-span-2">
           <p className="font-heading text-2xl font-extrabold tracking-[0.04em] uppercase">

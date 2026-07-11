@@ -164,6 +164,21 @@
   --chart-5: #f1eee6;
 }
 
+/*
+ * Footer is a deliberately dark band regardless of the site's light/dark
+ * theme — reuses the same ink/cream pairing as the dark palette above,
+ * scoped locally so `bg-background`, `text-foreground`, `text-muted-foreground`
+ * and `border-border` inside it resolve to dark-appropriate values.
+ */
+.site-footer {
+  --background: #161513;
+  --foreground: #f1eee6;
+  --muted-foreground: #a8a296;
+  --border: oklch(1 0 0 / 10%);
+  --secondary: #211f1b;
+  --secondary-foreground: #f1eee6;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
