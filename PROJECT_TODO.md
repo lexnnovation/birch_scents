@@ -11,71 +11,71 @@ check off tasks as they land. Conventions live in `CLAUDE.md` — read it before
 
 ## Phase 1 — Project Setup
 
-- [ ] 1.1 Initialize git repo with root `.gitignore` (node, PHP, `.env*`, `.next`, `vendor`).
-- [ ] 1.2 Scaffold `/frontend`: latest Next.js (App Router, TypeScript, Tailwind, ESLint, `src/` dir, import alias `@/`).
-- [ ] 1.3 Enable TypeScript `strict` mode; add Prettier + a `format` script; verify `next build` passes clean.
-- [ ] 1.4 Initialize shadcn/ui in `/frontend` (CSS variables mode); install Framer Motion and Zustand.
-- [ ] 1.5 Create the folder skeleton from CLAUDE.md §2 (`components/{ui,layout,product,cart,checkout,marketing,admin}`, `lib/api`, `lib/supabase`, `mocks`, `stores`, `types`) with placeholder index files.
-- [ ] 1.6 Create `frontend/.env.example` with the four `NEXT_PUBLIC_*` keys (values blank).
+- [x] 1.1 Initialize git repo with root `.gitignore` (node, PHP, `.env*`, `.next`, `vendor`).
+- [x] 1.2 Scaffold `/frontend`: latest Next.js (App Router, TypeScript, Tailwind, ESLint, `src/` dir, import alias `@/`).
+- [x] 1.3 Enable TypeScript `strict` mode; add Prettier + a `format` script; verify `next build` passes clean.
+- [x] 1.4 Initialize shadcn/ui in `/frontend` (CSS variables mode); install Framer Motion and Zustand.
+- [x] 1.5 Create the folder skeleton from CLAUDE.md §2 (`components/{ui,layout,product,cart,checkout,marketing,admin}`, `lib/api`, `lib/supabase`, `mocks`, `stores`, `types`) with placeholder index files.
+- [x] 1.6 Create `frontend/.env.example` with the four `NEXT_PUBLIC_*` keys (values blank).
 - [ ] 1.7 Create a Supabase project (free tier); note the URL, anon key, JWT secret, and DB connection string somewhere safe (not in git).
-- [ ] 1.8 Commit: "Phase 1 — project setup".
+- [x] 1.8 Commit: "Phase 1 — project setup".
 
 *(Backend scaffolding is deliberately deferred to Phase 6.)*
 
 ## Phase 2 — Design System & Mock Data
 
-- [ ] 2.1 Define design tokens in `globals.css` + Tailwind config: warm ivory/cream background, deep charcoal text, one muted gold/amber accent, semantic tokens (background, foreground, muted, accent, border) for the shadcn variables.
-- [ ] 2.2 Set up typography with `next/font`: a serif display face for headlines, a refined sans for body/UI; define the type scale (display, h1–h4, body, small, overline/eyebrow).
-- [ ] 2.3 Add and fully restyle core shadcn primitives: Button (solid/outline/ghost), Input, Label, Select, Sheet (cart drawer), Dialog, Badge, Skeleton, Separator, Sonner/Toast. None may look like default shadcn.
+- [x] 2.1 Define design tokens in `globals.css` + Tailwind config: warm ivory/cream background, deep charcoal text, one muted gold/amber accent, semantic tokens (background, foreground, muted, accent, border) for the shadcn variables.
+- [x] 2.2 Set up typography with `next/font`: a serif display face for headlines, a refined sans for body/UI; define the type scale (display, h1–h4, body, small, overline/eyebrow).
+- [x] 2.3 Add and fully restyle core shadcn primitives: Button (solid/outline/ghost), Input, Label, Select, Sheet (cart drawer), Dialog, Badge, Skeleton, Separator, Sonner/Toast. None may look like default shadcn.
 - [ ] 2.4 Build a throwaway `/dev/styleguide` page rendering all tokens, type scale, and primitives for visual QA (delete before launch).
-- [ ] 2.5 Define the API contract types in `src/types/`: `Category`, `Product`, `ProductVariant`, `CartItem`, `Order`, `OrderItem`, `Paginated<T>`, `ApiError` — all money fields as `*Pesewas: number` (integers).
-- [ ] 2.6 Write `lib/money.ts` with `formatPesewas()` (`Intl.NumberFormat en-GH / GHS`) + unit-style sanity checks.
-- [ ] 2.7 Create mock data in `src/mocks/`: 4 categories (Reed Diffusers, Room Sprays, Fragrance Oils, Humidifiers), ~12 products with sensory luxury copy (Snow Melon flagged `isFeatured`), 50ml/100ml variants where applicable, realistic pesewa prices, placeholder imagery (elegant neutral-toned placeholders or licensed stock).
-- [ ] 2.8 Build the mock-backed data layer: `lib/api/products.ts`, `categories.ts` etc. returning typed promises from mocks with a ~300 ms delay. Add `client.ts` as a stub for now.
-- [ ] 2.9 Create shared motion presets (`lib/motion.ts`): fade-up-on-scroll, stagger container, hover-lift — all with `prefers-reduced-motion` fallbacks.
-- [ ] 2.10 Commit: "Phase 2 — design system, types, mock data layer".
+- [x] 2.5 Define the API contract types in `src/types/`: `Category`, `Product`, `ProductVariant`, `CartItem`, `Order`, `OrderItem`, `Paginated<T>`, `ApiError` — all money fields as `*Pesewas: number` (integers).
+- [x] 2.6 Write `lib/money.ts` with `formatPesewas()` (`Intl.NumberFormat en-GH / GHS`) + unit-style sanity checks.
+- [x] 2.7 Create mock data in `src/mocks/`: 4 categories (Reed Diffusers, Room Sprays, Fragrance Oils, Humidifiers), ~12 products with sensory luxury copy (Snow Melon flagged `isFeatured`), 50ml/100ml variants where applicable, realistic pesewa prices, placeholder imagery (elegant neutral-toned placeholders or licensed stock).
+- [x] 2.8 Build the mock-backed data layer: `lib/api/products.ts`, `categories.ts` etc. returning typed promises from mocks with a ~300 ms delay. Add `client.ts` as a stub for now.
+- [x] 2.9 Create shared motion presets (`lib/motion.ts`): fade-up-on-scroll, stagger container, hover-lift — all with `prefers-reduced-motion` fallbacks.
+- [x] 2.10 Commit: "Phase 2 — design system, types, mock data layer".
 
 ## Phase 3 — Homepage
 
-- [ ] 3.1 Build `Header`: logo, nav (Shop, category links), cart icon with count badge, account icon; transparent-over-hero → solid-on-scroll behavior.
-- [ ] 3.2 Build `MobileNav`: full-screen or sheet menu, large elegant links, staggered entrance animation; fully keyboard/focus-trap accessible.
-- [ ] 3.3 Build `Footer`: brand statement, category links, contact (Accra, Ghana), quiet trust line; plus a slim `AnnouncementBar` ("Nationwide delivery across Ghana").
-- [ ] 3.4 Build the `Hero`: full-bleed premium visual, serif headline, sensory sub-line, single CTA to Shop; subtle entrance animation. Feature the brand tagline "Inhale and Feel the Difference" (as headline or eyebrow).
-- [ ] 3.5 Build `TrustBar`: FDA Approved · Long-lasting Fragrance · Nationwide Delivery · Premium Support — one quiet horizontal strip with fine icons.
-- [ ] 3.6 Build `CategoryShowcase`: four large image cards linking to category-filtered shop pages, hover zoom/lift.
-- [ ] 3.7 Build `SignatureScent` section for Snow Melon: asymmetric editorial layout, the flagship description copy, CTA to its product page.
-- [ ] 3.8 Build `FeaturedProducts` row reusing `ProductCard` (built in 4.1 — stub it now if needed) fed by `getFeaturedProducts()`.
-- [ ] 3.9 Build a `ForBusiness` teaser section (hotels, spas, offices — corporate gifting) with a contact CTA (mailto/phone for MVP).
-- [ ] 3.10 Assemble the landing page from these sections; scroll-triggered reveals; QA at 375/768/1440 px; run Lighthouse and fix anything under target.
-- [ ] 3.11 Commit: "Phase 3 — homepage".
+- [x] 3.1 Build `Header`: logo, nav (Shop, category links), cart icon with count badge, account icon; transparent-over-hero → solid-on-scroll behavior.
+- [x] 3.2 Build `MobileNav`: full-screen or sheet menu, large elegant links, staggered entrance animation; fully keyboard/focus-trap accessible.
+- [x] 3.3 Build `Footer`: brand statement, category links, contact (Accra, Ghana), quiet trust line; plus a slim `AnnouncementBar` ("Nationwide delivery across Ghana").
+- [x] 3.4 Build the `Hero`: full-bleed premium visual, serif headline, sensory sub-line, single CTA to Shop; subtle entrance animation. Feature the brand tagline "Inhale and Feel the Difference" (as headline or eyebrow).
+- [x] 3.5 Build `TrustBar`: FDA Approved · Long-lasting Fragrance · Nationwide Delivery · Premium Support — one quiet horizontal strip with fine icons.
+- [x] 3.6 Build `CategoryShowcase`: four large image cards linking to category-filtered shop pages, hover zoom/lift.
+- [x] 3.7 Build `SignatureScent` section for Snow Melon: asymmetric editorial layout, the flagship description copy, CTA to its product page.
+- [x] 3.8 Build `FeaturedProducts` row reusing `ProductCard` (built in 4.1 — stub it now if needed) fed by `getFeaturedProducts()`.
+- [x] 3.9 Build a `ForBusiness` teaser section (hotels, spas, offices — corporate gifting) with a contact CTA (mailto/phone for MVP).
+- [x] 3.10 Assemble the landing page from these sections; scroll-triggered reveals; QA at 375/768/1440 px; run Lighthouse and fix anything under target.
+- [x] 3.11 Commit: "Phase 3 — homepage".
 
 ## Phase 4 — Shop & Product Pages
 
-- [ ] 4.1 Build `ProductCard`: large image, name, category eyebrow, from-price (`formatPesewas`), hover lift + secondary image or subtle zoom, whole card clickable with proper link semantics.
-- [ ] 4.2 Build the Shop page `/shop`: responsive grid (2-col mobile → 4-col desktop), page intro header, `Skeleton` loading state.
-- [ ] 4.3 Add category filtering: elegant pill/tab bar + `/shop/[category]` routes with correct metadata per category; empty-state design.
-- [ ] 4.4 Build the PDP `/products/[slug]` layout: gallery left / details right on desktop, stacked on mobile.
-- [ ] 4.5 Build `ProductGallery`: main image + thumbnails, crossfade transitions, `next/image` throughout.
-- [ ] 4.6 Build `VariantSelector` (50ml/100ml): accessible radio-group styled as premium size chips; price updates with selection; out-of-stock variants disabled with a tasteful note.
-- [ ] 4.7 Build PDP details: name, tagline, sensory description, scent notes, quantity stepper, prominent Add-to-Cart button; sticky add-to-cart bar on mobile.
-- [ ] 4.8 Add a "Complete the atmosphere" related-products row (same category, from mocks).
-- [ ] 4.9 Add `generateMetadata` for shop + PDP (title, description, OG image) and a `not-found` state for bad slugs.
-- [ ] 4.10 Responsive + accessibility QA pass on shop and PDP; commit: "Phase 4 — shop & product pages".
+- [x] 4.1 Build `ProductCard`: large image, name, category eyebrow, from-price (`formatPesewas`), hover lift + secondary image or subtle zoom, whole card clickable with proper link semantics.
+- [x] 4.2 Build the Shop page `/shop`: responsive grid (2-col mobile → 4-col desktop), page intro header, `Skeleton` loading state.
+- [x] 4.3 Add category filtering: elegant pill/tab bar + `/shop/[category]` routes with correct metadata per category; empty-state design.
+- [x] 4.4 Build the PDP `/products/[slug]` layout: gallery left / details right on desktop, stacked on mobile.
+- [x] 4.5 Build `ProductGallery`: main image + thumbnails, crossfade transitions, `next/image` throughout.
+- [x] 4.6 Build `VariantSelector` (50ml/100ml): accessible radio-group styled as premium size chips; price updates with selection; out-of-stock variants disabled with a tasteful note.
+- [x] 4.7 Build PDP details: name, tagline, sensory description, scent notes, quantity stepper, prominent Add-to-Cart button; sticky add-to-cart bar on mobile.
+- [x] 4.8 Add a "Complete the atmosphere" related-products row (same category, from mocks).
+- [x] 4.9 Add `generateMetadata` for shop + PDP (title, description, OG image) and a `not-found` state for bad slugs.
+- [x] 4.10 Responsive + accessibility QA pass on shop and PDP; commit: "Phase 4 — shop & product pages".
 
 ## Phase 5 — Cart & Checkout UI
 
-- [ ] 5.1 Build the cart store (`stores/cart.ts`): Zustand + `persist` (localStorage); items keyed by `variantId`; add/update-qty/remove/clear; derived `subtotalPesewas` and count. Integers only.
-- [ ] 5.2 Wire Add-to-Cart on the PDP: adds item, opens the cart drawer, toast confirmation.
-- [ ] 5.3 Build `CartDrawer` (customized Sheet): line items with thumbnails, variant label, qty steppers, remove; subtotal; "Checkout" and "Continue shopping" CTAs; empty-cart state with a warm invitation back to Shop.
-- [ ] 5.4 Build the full `/cart` page (same store, roomier layout) for direct visits.
-- [ ] 5.5 Build the checkout page `/checkout`: order summary (line items + subtotal + flat delivery fee + total) alongside a delivery details form (name, phone, address, city, note) with inline validation.
-- [ ] 5.6 Add the auth gate UX: unauthenticated users hitting checkout are routed to login with a `redirectTo` back to checkout.
-- [ ] 5.7 Build login/register pages in the `(auth)` layout: email+password forms and a "Continue with Google" button — pure UI for now (fake success), styled to the brand.
-- [ ] 5.8 Build the order-confirmation page (`/orders/confirmation/[orderNumber]`): thank-you moment, order number, summary, delivery details — fed by mock order data.
-- [ ] 5.9 Build `/orders` (customer order history): list with status badges, and an order detail view — mock data.
-- [ ] 5.10 Build the admin UI shell (`/admin`): sidebar layout + three screens against mocks — products table with create/edit form (name, category, copy, variants, prices in pesewas), inventory view (stock per variant, inline adjust), orders table with status detail/update.
-- [ ] 5.11 Full storefront walkthrough QA: landing → shop → PDP → cart → checkout → confirmation on mobile + desktop; fix rough edges; delete-or-polish pass on animations.
-- [ ] 5.12 Commit: "Phase 5 — cart, checkout, auth & admin UI (mock-backed)". **UI freeze: backend work may begin.**
+- [x] 5.1 Build the cart store (`stores/cart.ts`): Zustand + `persist` (localStorage); items keyed by `variantId`; add/update-qty/remove/clear; derived `subtotalPesewas` and count. Integers only.
+- [x] 5.2 Wire Add-to-Cart on the PDP: adds item, opens the cart drawer, toast confirmation.
+- [x] 5.3 Build `CartDrawer` (customized Sheet): line items with thumbnails, variant label, qty steppers, remove; subtotal; "Checkout" and "Continue shopping" CTAs; empty-cart state with a warm invitation back to Shop.
+- [x] 5.4 Build the full `/cart` page (same store, roomier layout) for direct visits.
+- [x] 5.5 Build the checkout page `/checkout`: order summary (line items + subtotal + flat delivery fee + total) alongside a delivery details form (name, phone, address, city, note) with inline validation.
+- [x] 5.6 Add the auth gate UX: unauthenticated users hitting checkout are routed to login with a `redirectTo` back to checkout.
+- [x] 5.7 Build login/register pages in the `(auth)` layout: email+password forms and a "Continue with Google" button — pure UI for now (fake success), styled to the brand.
+- [x] 5.8 Build the order-confirmation page (`/orders/confirmation/[orderNumber]`): thank-you moment, order number, summary, delivery details — fed by mock order data.
+- [x] 5.9 Build `/orders` (customer order history): list with status badges, and an order detail view — mock data.
+- [x] 5.10 Build the admin UI shell (`/admin`): sidebar layout + three screens against mocks — products table with create/edit form (name, category, copy, variants, prices in pesewas), inventory view (stock per variant, inline adjust), orders table with status detail/update.
+- [x] 5.11 Full storefront walkthrough QA: landing → shop → PDP → cart → checkout → confirmation on mobile + desktop; fix rough edges; delete-or-polish pass on animations.
+- [x] 5.12 Commit: "Phase 5 — cart, checkout, auth & admin UI (mock-backed)". **UI freeze: backend work may begin.**
 
 ## Phase 6 — Database & Laravel Models
 
