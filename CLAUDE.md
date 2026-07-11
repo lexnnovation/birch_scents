@@ -286,7 +286,7 @@ Each app owns its env file; nothing is shared implicitly. Commit `.env.example` 
 
 **frontend/.env** (`NEXT_PUBLIC_` = shipped to the browser — public-safe only)
 ```
-NEXT_PUBLIC_API_URL=            # local: https://birchscents-api.test/api/v1 (Herd) · prod: https://api.birchscents.com/api/v1
+NEXT_PUBLIC_API_URL=            # local: https://birchscents.test/api/v1 (Herd) · prod: https://api.birchscents.com/api/v1
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=  # anon key is public by design
 NEXT_PUBLIC_SITE_URL=           # for auth redirects & metadata
@@ -312,7 +312,7 @@ Rules: reference env only via `config/*.php` (`config('services.paystack.secret'
 
 Local development does **not** use Docker — Docker is a production-only concern (§13). Run the two apps natively:
 
-- **Backend (Laravel):** served by **Laravel Herd**. Herd bundles PHP + nginx and serves the app at a `.test` domain automatically (e.g. `https://birchscents-api.test`) — no `php artisan serve`, no local Docker. Run Artisan/Composer through Herd's bundled PHP (`herd php artisan …`, `herd composer …`, or add Herd's PHP to your `PATH`). Migrations, seeders, and Pest tests all run through Herd's PHP.
+- **Backend (Laravel):** served by **Laravel Herd**. Herd bundles PHP + nginx and serves the app at a `.test` domain automatically (`https://birchscents.test`) — no `php artisan serve`, no local Docker. Run Artisan/Composer through Herd's bundled PHP (`herd php artisan …`, `herd composer …`, or add Herd's PHP to your `PATH`). Migrations, seeders, and Pest tests all run through Herd's PHP.
 - **Frontend (Next.js):** `npm run dev` on `http://localhost:3000` — Herd does not serve Node apps.
 - **Database:** Supabase-hosted Postgres in every environment (§7); Herd runs no local database for this project. Point `backend/.env` `DB_*` at Supabase for local dev too.
 - **Local env wiring:** frontend `NEXT_PUBLIC_API_URL=https://<herd-domain>.test/api/v1`; backend `FRONTEND_URL=http://localhost:3000` (CORS origin + Paystack callback base). Herd provisions trusted TLS for `.test` domains, so the local API is HTTPS out of the box.
