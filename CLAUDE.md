@@ -92,7 +92,7 @@ birch_scents/
 │   │   ├── types/                # shared API contract types (Product, Order…)
 │   │   └── styles/globals.css    # design tokens as CSS variables
 │   └── …
-└── backend/                      # Laravel 12 (API-only)
+└── backend/                      # Laravel 13 (API-only)
     ├── Dockerfile
     ├── app/
     │   ├── Http/

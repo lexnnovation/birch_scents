@@ -79,14 +79,14 @@ check off tasks as they land. Conventions live in `CLAUDE.md` — read it before
 
 ## Phase 6 — Database & Laravel Models
 
-- [ ] 6.1 Scaffold `/backend`: latest Laravel, API-only (no Blade views/auth scaffolding); set JSON as default; add Pest. Link the project in **Laravel Herd** so it serves at a `.test` domain — local backend dev uses Herd, not Docker (CLAUDE.md §12).
-- [ ] 6.2 Configure `pgsql` connection to Supabase Postgres via env; create `backend/.env.example` per CLAUDE.md §11; verify `herd php artisan migrate` connects.
-- [ ] 6.3 Write migrations for `users` (with `supabase_id` uuid unique, `is_admin`), `categories`, `products`, `product_variants` — per the schema in CLAUDE.md §7.
-- [ ] 6.4 Write migrations for `orders`, `order_items`, `payments` (unique `reference`, `raw_payload` jsonb) with FK constraints and indexes (`slug`, `order_number`, `reference`).
-- [ ] 6.5 Create models with `$fillable`, relationships, and casts; add `OrderStatus` / `PaymentStatus` PHP enums.
-- [ ] 6.6 Write seeders mirroring the frontend mock data exactly (same categories, products, variants, pesewa prices) so the API swap is visually invisible.
-- [ ] 6.7 Add `GET /api/v1/health` (JSON + DB ping); confirm it responds at the Herd `.test` URL. Run migrations + seeds against Supabase (via `herd php artisan`); verify rows in a psql session.
-- [ ] 6.8 Commit: "Phase 6 — Laravel scaffold, schema, seeds".
+- [x] 6.1 Scaffold `/backend`: latest Laravel, API-only (no Blade views/auth scaffolding); set JSON as default; add Pest. Link the project in **Laravel Herd** so it serves at a `.test` domain — local backend dev uses Herd, not Docker (CLAUDE.md §12).
+- [x] 6.2 Configure `pgsql` connection to Supabase Postgres via env; create `backend/.env.example` per CLAUDE.md §11; verify `herd php artisan migrate` connects.
+- [x] 6.3 Write migrations for `users` (with `supabase_id` uuid unique, `is_admin`), `categories`, `products`, `product_variants` — per the schema in CLAUDE.md §7.
+- [x] 6.4 Write migrations for `orders`, `order_items`, `payments` (unique `reference`, `raw_payload` jsonb) with FK constraints and indexes (`slug`, `order_number`, `reference`).
+- [x] 6.5 Create models with `$fillable`, relationships, and casts; add `OrderStatus` / `PaymentStatus` PHP enums.
+- [x] 6.6 Write seeders mirroring the frontend mock data exactly (same categories, products, variants, pesewa prices) so the API swap is visually invisible.
+- [x] 6.7 Add `GET /api/v1/health` (JSON + DB ping); confirm it responds at the Herd `.test` URL. Run migrations + seeds against Supabase (via `herd php artisan`); verify rows in a psql session.
+- [x] 6.8 Commit: "Phase 6 — Laravel scaffold, schema, seeds".
 
 ## Phase 7 — Authentication
 
