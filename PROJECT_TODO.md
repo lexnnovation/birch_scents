@@ -5,6 +5,8 @@ data layer (`lib/api/`); the backend only begins once the UI is finished. Every 
 small enough to complete in one focused session. Work strictly in order within a phase;
 check off tasks as they land. Conventions live in `CLAUDE.md` — read it before each phase.
 
+**Brand tagline:** "Inhale and Feel the Difference."
+
 ---
 
 ## Phase 1 — Project Setup
@@ -38,7 +40,7 @@ check off tasks as they land. Conventions live in `CLAUDE.md` — read it before
 - [ ] 3.1 Build `Header`: logo, nav (Shop, category links), cart icon with count badge, account icon; transparent-over-hero → solid-on-scroll behavior.
 - [ ] 3.2 Build `MobileNav`: full-screen or sheet menu, large elegant links, staggered entrance animation; fully keyboard/focus-trap accessible.
 - [ ] 3.3 Build `Footer`: brand statement, category links, contact (Accra, Ghana), quiet trust line; plus a slim `AnnouncementBar` ("Nationwide delivery across Ghana").
-- [ ] 3.4 Build the `Hero`: full-bleed premium visual, serif headline, sensory sub-line, single CTA to Shop; subtle entrance animation.
+- [ ] 3.4 Build the `Hero`: full-bleed premium visual, serif headline, sensory sub-line, single CTA to Shop; subtle entrance animation. Feature the brand tagline "Inhale and Feel the Difference" (as headline or eyebrow).
 - [ ] 3.5 Build `TrustBar`: FDA Approved · Long-lasting Fragrance · Nationwide Delivery · Premium Support — one quiet horizontal strip with fine icons.
 - [ ] 3.6 Build `CategoryShowcase`: four large image cards linking to category-filtered shop pages, hover zoom/lift.
 - [ ] 3.7 Build `SignatureScent` section for Snow Melon: asymmetric editorial layout, the flagship description copy, CTA to its product page.

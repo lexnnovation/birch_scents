@@ -1,6 +1,7 @@
 # CLAUDE.md — Birchscents Engineering Handbook
 
 Birchscents is Ghana's premier luxury home fragrance brand (Accra-based, FDA-approved).
+Brand tagline: **"Inhale and Feel the Difference."**
 This repository is a headless e-commerce monorepo: a Next.js storefront and a Laravel REST API.
 The product must *feel* like a world-class luxury brand — sophisticated, warm, calm, minimal — while the codebase stays simple and boring. When in doubt, choose the simpler implementation.
 
@@ -125,7 +126,7 @@ The storefront must read as a crafted luxury brand, not a template. Non-negotiab
 - **shadcn/ui is always customized.** If a component still looks like the shadcn docs, it's not done.
 - **Accessibility is a launch requirement:** semantic landmarks, visible focus states, alt text, 4.5:1 contrast, full keyboard operability of nav/drawer/dialogs, form labels + inline errors.
 - **Mobile-first.** Every page is designed at 375 px first, then scaled up. Sticky add-to-cart on mobile PDP.
-- **Copy voice:** premium, human, sensory ("crisp", "velvety", "warm", "inviting"). No exclamation-mark marketing, no clichés. Flagship scent: **Snow Melon**.
+- **Copy voice:** premium, human, sensory ("crisp", "velvety", "warm", "inviting"). No exclamation-mark marketing, no clichés. Flagship scent: **Snow Melon**. Brand tagline (reserve for hero, OG/meta, and brand moments): **"Inhale and Feel the Difference."**
 - **Trust signals** (FDA Approved, Long-lasting, Nationwide Delivery in Ghana, Premium Support) appear as a quiet, elegant strip/section — never badge-spam.
 
 ---
