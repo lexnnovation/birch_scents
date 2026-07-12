@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\CatalogController;
 use App\Http\Controllers\Api\V1\CheckoutController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\OrderController;
+use App\Http\Controllers\Api\V1\PaystackWebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,11 +17,15 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | Registered in bootstrap/app.php with the "api/v1" prefix. Nothing here
 | uses Laravel sessions — auth is stateless via the Supabase JWT middleware
-| (CLAUDE.md §6). Money/stock are always re-validated server-side; the
-| Paystack call itself is added to POST /checkout in Phase 9.
+| (CLAUDE.md §6). Money/stock are always re-validated server-side.
 */
 
 Route::get('health', HealthController::class)->name('health');
+
+// Paystack webhook — outside auth entirely (Paystack, not a browser, calls
+// this), HMAC-verified inside the controller, rate-limited (CLAUDE.md §9).
+Route::post('webhooks/paystack', [PaystackWebhookController::class, 'handle'])
+    ->middleware('throttle:60,1');
 
 // Public catalog — no auth required.
 Route::get('categories', [CatalogController::class, 'categories']);

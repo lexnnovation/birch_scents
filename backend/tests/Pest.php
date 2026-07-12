@@ -15,9 +15,11 @@ use Tests\TestCase;
 */
 
 require_once __DIR__.'/Support/SupabaseJwt.php';
+require_once __DIR__.'/Support/PaystackFakes.php';
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
+    ->beforeEach(fn () => \Illuminate\Support\Facades\Http::preventStrayRequests())
     ->in('Feature');
 
 /*

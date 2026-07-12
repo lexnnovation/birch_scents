@@ -32,5 +32,9 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <!-- Deterministic dummy key so the Pest suite never depends on (or
+             touches) the real Paystack credentials in .env. -->
+        <env name="PAYSTACK_SECRET_KEY" value="sk_test_pest_dummy_key"/>
+        <env name="PAYSTACK_PUBLIC_KEY" value="pk_test_pest_dummy_key"/>
     </php>
 </phpunit>

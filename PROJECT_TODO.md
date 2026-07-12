@@ -112,14 +112,14 @@ check off tasks as they land. Conventions live in `CLAUDE.md` — read it before
 
 ## Phase 9 — Paystack Integration
 
-- [ ] 9.1 Create Paystack account; get test keys; add `PAYSTACK_*` to backend env + `config/services.php`.
-- [ ] 9.2 `PaystackService`: `initializeTransaction()` (amount in pesewas, GHS, email, generated unique reference, callback URL) and `verifyTransaction()` via Paystack API — typed responses, timeouts, logged failures.
-- [ ] 9.3 Extend `POST /checkout` to initialize the transaction and return `{ authorizationUrl, reference, orderNumber }`; store the reference on the `payments` row.
-- [ ] 9.4 Webhook `POST /webhooks/paystack`: raw-body HMAC SHA512 check with `hash_equals` (401 on mismatch); excluded from auth middleware; rate-limited.
-- [ ] 9.5 On `charge.success`: re-verify via API, match amount+currency against our payment row, then in one transaction mark payment `success` + order `paid` + decrement variant stock; idempotent on replay; store `raw_payload`; 200 for all validly-signed events.
-- [ ] 9.6 Pest tests: bad signature → 401, success flow updates payment/order/stock, replayed webhook is a no-op, amount mismatch does not fulfill.
-- [ ] 9.7 End-to-end test with Paystack test cards against the local Herd backend (tunnel the `.test` domain so Paystack can reach the webhook); configure the test webhook URL in the Paystack dashboard.
-- [ ] 9.8 Commit: "Phase 9 — Paystack payments".
+- [x] 9.1 Create Paystack account; get test keys; add `PAYSTACK_*` to backend env + `config/services.php`. (Test keys are from an existing personal Paystack account, reused for this project's test mode.)
+- [x] 9.2 `PaystackService`: `initializeTransaction()` (amount in pesewas, GHS, email, generated unique reference, callback URL) and `verifyTransaction()` via Paystack API — typed responses, timeouts, logged failures. Network/connection failures are also normalized to `PaystackException` so callers only ever handle one exception type.
+- [x] 9.3 Extend `POST /checkout` to initialize the transaction and return `{ authorizationUrl, reference, orderNumber }`; store the reference on the `payments` row. Paystack init happens inside the same DB transaction as order creation — a failed init rolls back the whole checkout (502).
+- [x] 9.4 Webhook `POST /webhooks/paystack`: raw-body HMAC SHA512 check with `hash_equals` (401 on mismatch); excluded from auth middleware; rate-limited (`throttle:60,1`).
+- [x] 9.5 On `charge.success`: re-verify via API, match amount+currency against our payment row, then in one transaction mark payment `success` + order `paid` + decrement variant stock; idempotent on replay (row-locked re-check inside the transaction); store `raw_payload`; 200 for all validly-signed events.
+- [x] 9.6 Pest tests: bad signature → 401, success flow updates payment/order/stock, replayed webhook is a no-op (no double stock decrement), amount mismatch does not fulfill, `PaystackService` failure/timeout handling. 14 new tests, 57 total passing.
+- [ ] 9.7 End-to-end test with Paystack test cards against the local Herd backend (tunnel the `.test` domain so Paystack can reach the webhook); configure the test webhook URL in the Paystack dashboard. **Deferred to the user** — requires real browser card entry; verified instead via CLI: real `PaystackService` calls against the live Paystack test API (init + verify, both succeeded), and a hand-signed webhook POST against the live Herd server + real Supabase DB (correctly refused to fulfill an unrecognized reference, proving re-verification isn't bypassable even with a valid signature). Tunnel + dashboard webhook URL registration still needed before a real card test.
+- [x] 9.8 Commit: "Phase 9 — Paystack payments".
 
 ## Phase 10 — Connect Frontend to Backend
 

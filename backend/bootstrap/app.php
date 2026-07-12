@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\CheckoutFailedException;
+use App\Exceptions\PaystackException;
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\VerifySupabaseJwt;
 use Illuminate\Foundation\Application;
@@ -29,4 +30,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(fn (CheckoutFailedException $e) => response()->json([
             'message' => $e->getMessage(),
         ], 409));
+
+        $exceptions->render(fn (PaystackException $e) => response()->json([
+            'message' => $e->getMessage(),
+        ], 502));
     })->create();

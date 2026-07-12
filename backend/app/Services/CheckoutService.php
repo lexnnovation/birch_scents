@@ -21,7 +21,10 @@ use Illuminate\Support\Str;
  */
 class CheckoutService
 {
-    public function checkout(User $user, array $items, array $delivery): Order
+    public function __construct(private readonly PaystackService $paystackService) {}
+
+    /** @return array{order: Order, authorizationUrl: string} */
+    public function checkout(User $user, array $items, array $delivery): array
     {
         return DB::transaction(function () use ($user, $items, $delivery) {
             $variantIds = array_column($items, 'variantId');
@@ -84,15 +87,27 @@ class CheckoutService
                 ]);
             }
 
+            $reference = $this->generatePaymentReference();
+
             $order->payment()->create([
                 'provider' => 'paystack',
-                'reference' => $this->generatePaymentReference(),
+                'reference' => $reference,
                 'status' => PaymentStatus::Pending,
                 'amount_pesewas' => $total,
                 'currency' => 'GHS',
             ]);
 
-            return $order->load('items', 'payment');
+            // Initialized inside the transaction: if Paystack is unreachable
+            // or rejects the request, the whole checkout rolls back rather
+            // than leaving an orphaned pending order.
+            $init = $this->paystackService->initializeTransaction(
+                email: $user->email,
+                amountPesewas: $total,
+                reference: $reference,
+                callbackUrl: rtrim(config('checkout.frontend_url'), '/').'/checkout/callback',
+            );
+
+            return ['order' => $order->load('items', 'payment'), 'authorizationUrl' => $init['authorizationUrl']];
         });
     }
 

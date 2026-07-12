@@ -4,6 +4,7 @@ use App\Enums\PaymentStatus;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\User;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 function validDelivery(array $overrides = []): array
@@ -33,6 +34,8 @@ it('rejects checkout with missing delivery fields', function () {
 });
 
 it('computes totals from server-side prices, ignoring anything the client sends', function () {
+    fakePaystackInitialize('https://checkout.paystack.com/real-looking-code');
+
     $user = User::factory()->create(['supabase_id' => (string) Str::uuid()]);
     $token = tokenFor($user->supabase_id);
 
@@ -57,23 +60,44 @@ it('computes totals from server-side prices, ignoring anything the client sends'
     $expectedSubtotal = 24500 * 2;
     $expectedTotal = $expectedSubtotal + config('checkout.delivery_fee_pesewas');
 
-    $response->assertJsonPath('data.subtotalPesewas', $expectedSubtotal);
-    $response->assertJsonPath('data.totalPesewas', $expectedTotal);
-    $response->assertJsonPath('data.status', 'pending');
-    $response->assertJsonPath('data.items.0.unitPricePesewas', 24500);
+    $response->assertJsonStructure(['data' => ['authorizationUrl', 'reference', 'orderNumber']]);
+    $response->assertJsonPath('data.authorizationUrl', 'https://checkout.paystack.com/real-looking-code');
 
     $this->assertDatabaseHas('orders', [
         'user_id' => $user->id,
+        'order_number' => $response->json('data.orderNumber'),
+        'status' => 'pending',
         'subtotal_pesewas' => $expectedSubtotal,
         'total_pesewas' => $expectedTotal,
     ]);
     $this->assertDatabaseHas('payments', [
+        'reference' => $response->json('data.reference'),
         'status' => PaymentStatus::Pending->value,
         'amount_pesewas' => $expectedTotal,
+    ]);
+    $this->assertDatabaseHas('order_items', [
+        'unit_price_pesewas' => 24500,
+        'quantity' => 2,
     ]);
 
     // Stock is only decremented by the Paystack webhook (Phase 9), never at checkout.
     expect($variant->fresh()->stock)->toBe(10);
+});
+
+it('rolls back the whole checkout if Paystack initialization fails', function () {
+    Http::fake(['api.paystack.co/transaction/initialize' => Http::response(['status' => false, 'message' => 'nope'], 400)]);
+
+    $user = User::factory()->create(['supabase_id' => (string) Str::uuid()]);
+    $token = tokenFor($user->supabase_id);
+    $variant = ProductVariant::factory()->create(['stock' => 10]);
+
+    $this->withToken($token)->postJson('/api/v1/checkout', [
+        'items' => [['variantId' => (string) $variant->id, 'quantity' => 1]],
+        'delivery' => validDelivery(),
+    ])->assertStatus(502);
+
+    $this->assertDatabaseCount('orders', 0);
+    $this->assertDatabaseCount('payments', 0);
 });
 
 it('rejects checkout when requested quantity exceeds stock (409)', function () {
@@ -116,6 +140,8 @@ it('rejects checkout for a variant whose product is inactive (409)', function ()
 });
 
 it('sums multiple line items correctly in one transaction', function () {
+    fakePaystackInitialize();
+
     $user = User::factory()->create(['supabase_id' => (string) Str::uuid()]);
     $token = tokenFor($user->supabase_id);
 
@@ -131,6 +157,8 @@ it('sums multiple line items correctly in one transaction', function () {
     ])->assertCreated();
 
     $expectedSubtotal = (10000 * 2) + (5000 * 3);
-    $response->assertJsonPath('data.subtotalPesewas', $expectedSubtotal);
-    expect($response->json('data.items'))->toHaveCount(2);
+    $orderNumber = $response->json('data.orderNumber');
+
+    $this->assertDatabaseHas('orders', ['order_number' => $orderNumber, 'subtotal_pesewas' => $expectedSubtotal]);
+    $this->assertDatabaseCount('order_items', 2);
 });

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CheckoutRequest;
-use App\Http\Resources\OrderResource;
 use App\Services\CheckoutService;
 use Illuminate\Http\JsonResponse;
 
@@ -16,8 +15,13 @@ class CheckoutController extends Controller
     {
         $data = $request->validated();
 
-        $order = $this->checkoutService->checkout($request->user(), $data['items'], $data['delivery']);
+        $result = $this->checkoutService->checkout($request->user(), $data['items'], $data['delivery']);
+        $order = $result['order'];
 
-        return response()->json(['data' => new OrderResource($order)], 201);
+        return response()->json(['data' => [
+            'authorizationUrl' => $result['authorizationUrl'],
+            'reference' => $order->payment->reference,
+            'orderNumber' => $order->order_number,
+        ]], 201);
     }
 }
