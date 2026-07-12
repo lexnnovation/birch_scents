@@ -1,15 +1,51 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Api\V1\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Api\V1\Admin\ProductVariantController as AdminProductVariantController;
+use App\Http\Controllers\Api\V1\Admin\VariantController as AdminVariantController;
+use App\Http\Controllers\Api\V1\CatalogController;
+use App\Http\Controllers\Api\V1\CheckoutController;
 use App\Http\Controllers\Api\V1\HealthController;
+use App\Http\Controllers\Api\V1\OrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
 | API v1 routes
 |--------------------------------------------------------------------------
-| Registered in bootstrap/app.php with the "api/v1" prefix. All customer,
-| auth, and admin endpoints live here (added in Phases 7–9). Nothing here
-| uses Laravel sessions — auth is stateless via the Supabase JWT middleware.
+| Registered in bootstrap/app.php with the "api/v1" prefix. Nothing here
+| uses Laravel sessions — auth is stateless via the Supabase JWT middleware
+| (CLAUDE.md §6). Money/stock are always re-validated server-side; the
+| Paystack call itself is added to POST /checkout in Phase 9.
 */
 
 Route::get('health', HealthController::class)->name('health');
+
+// Public catalog — no auth required.
+Route::get('categories', [CatalogController::class, 'categories']);
+Route::get('products', [CatalogController::class, 'products']);
+Route::get('products/{product}', [CatalogController::class, 'show']);
+
+// Customer routes — own data only.
+Route::middleware('auth.supabase')->group(function () {
+    Route::get('orders', [OrderController::class, 'index']);
+    Route::get('orders/{orderNumber}', [OrderController::class, 'show']);
+    Route::post('checkout', [CheckoutController::class, 'store']);
+});
+
+// Admin routes — full catalog visibility + writes.
+Route::prefix('admin')->middleware(['auth.supabase', 'admin'])->group(function () {
+    Route::get('products', [AdminProductController::class, 'index']);
+    Route::post('products', [AdminProductController::class, 'store']);
+    Route::patch('products/{product}', [AdminProductController::class, 'update']);
+    Route::delete('products/{product}', [AdminProductController::class, 'destroy']);
+
+    Route::post('products/{product}/variants', [AdminProductVariantController::class, 'store']);
+    Route::patch('variants/{variant}', [AdminProductVariantController::class, 'update']);
+    Route::delete('variants/{variant}', [AdminProductVariantController::class, 'destroy']);
+    Route::patch('variants/{variant}/stock', [AdminVariantController::class, 'updateStock']);
+
+    Route::get('orders', [AdminOrderController::class, 'index']);
+    Route::patch('orders/{order}', [AdminOrderController::class, 'update']);
+});

@@ -101,14 +101,14 @@ check off tasks as they land. Conventions live in `CLAUDE.md` — read it before
 
 ## Phase 8 — REST API
 
-- [ ] 8.1 Configure CORS for `FRONTEND_URL`; set up `/api/v1` route group and the success/error envelope conventions.
-- [ ] 8.2 Public catalog endpoints: `GET /categories`, `GET /products` (category filter, featured flag, pagination), `GET /products/{slug}` — with API Resources emitting camelCase exactly matching `frontend/src/types`.
-- [ ] 8.3 Customer order endpoints: `GET /orders` (own orders only), `GET /orders/{orderNumber}` (own-order authorization).
-- [ ] 8.4 `CheckoutService` + `POST /checkout`: FormRequest validation; re-validate items against DB (active, in stock, server prices); compute totals; create order + items + pending payment in a transaction; return order payload (Paystack call added in Phase 9).
-- [ ] 8.5 Admin product endpoints: CRUD for products + variants (`/admin/products`…), including activate/deactivate; FormRequests for all writes.
-- [ ] 8.6 Admin inventory endpoint: `PATCH /admin/variants/{id}/stock`; admin orders: `GET /admin/orders` (filter by status), `PATCH /admin/orders/{id}` (status transitions validated against the enum).
-- [ ] 8.7 Pest feature tests: catalog shapes, own-order isolation, checkout rejects price tampering and overselling (409), admin CRUD happy paths + 403 for non-admins.
-- [ ] 8.8 Commit: "Phase 8 — REST API complete".
+- [x] 8.1 Configure CORS for `FRONTEND_URL`; set up `/api/v1` route group and the success/error envelope conventions.
+- [x] 8.2 Public catalog endpoints: `GET /categories`, `GET /products` (category filter, featured flag, pagination), `GET /products/{slug}` — with API Resources emitting camelCase exactly matching `frontend/src/types`.
+- [x] 8.3 Customer order endpoints: `GET /orders` (own orders only), `GET /orders/{orderNumber}` (own-order authorization).
+- [x] 8.4 `CheckoutService` + `POST /checkout`: FormRequest validation; re-validate items against DB (active, in stock, server prices); compute totals (flat GH₵20 delivery fee via `config('checkout.delivery_fee_pesewas')`); create order + items + pending payment in a transaction; return order payload (Paystack call added in Phase 9). Stock is checked but intentionally **not** decremented here — only the Phase 9 webhook decrements, per CLAUDE.md §9.
+- [x] 8.5 Admin product endpoints: CRUD for products + variants (`/admin/products`…), including activate/deactivate; FormRequests for all writes.
+- [x] 8.6 Admin inventory endpoint: `PATCH /admin/variants/{id}/stock`; admin orders: `GET /admin/orders` (filter by status), `PATCH /admin/orders/{orderNumber}` (status transitions validated against the enum via `OrderStatus::canTransitionTo()`).
+- [x] 8.7 Pest feature tests: catalog shapes, own-order isolation, checkout rejects price tampering and overselling (409), admin CRUD happy paths + 403 for non-admins. 43 tests passing.
+- [x] 8.8 Commit: "Phase 8 — REST API complete".
 
 ## Phase 9 — Paystack Integration
 

@@ -1,69 +1,21 @@
 <?php
 
 use App\Models\User;
-use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
 /**
  * Exercises VerifySupabaseJwt + EnsureAdmin (CLAUDE.md §6) against a
  * hand-signed ES256 token verified through a faked JWKS response — no live
- * Supabase call needed. Routes are registered per-test since Phase 8 owns
- * the real ones.
+ * Supabase call needed. Routes are registered per-test since these exercise
+ * the middleware in isolation; the real Phase 8 routes are covered by their
+ * own Feature tests.
  *
  * Supabase's current default signs access tokens asymmetrically (ES256) and
  * publishes public keys via JWKS, rather than a shared HS256 secret — this
- * test keypair mirrors that shape.
+ * test keypair (shared via tests/Support/SupabaseJwt.php) mirrors that shape.
  */
-const TEST_KID = 'test-key-1';
-
-// A throwaway P-256 keypair generated for this test suite only.
-const TEST_EC_PRIVATE_KEY = <<<'PEM'
------BEGIN EC PRIVATE KEY-----
-MHcCAQEEIKkMLuByzw7dJNTLhWSSM+3eT75fiAVWRJIn7d0nOaQ3oAoGCCqGSM49
-AwEHoUQDQgAEyyrDdY1Ngh7eNGMHhXJvkNXz7tzu7v3gVFz3XWnXemda/Jz6ftP4
-ihX4PsMFqJ6o3nl3G0Ca9YJHMOz35/vQdg==
------END EC PRIVATE KEY-----
-PEM;
-
-const TEST_JWK_X = 'yyrDdY1Ngh7eNGMHhXJvkNXz7tzu7v3gVFz3XWnXemc';
-const TEST_JWK_Y = 'Wvyc-n7T-IoV-D7DBaieqN55dxtAmvWCRzDs9-f70HY';
-
-function fakeJwks(): void
-{
-    Http::fake([
-        '*/.well-known/jwks.json' => Http::response([
-            'keys' => [[
-                'kty' => 'EC',
-                'crv' => 'P-256',
-                'alg' => 'ES256',
-                'use' => 'sig',
-                'kid' => TEST_KID,
-                'x' => TEST_JWK_X,
-                'y' => TEST_JWK_Y,
-            ]],
-        ]),
-    ]);
-}
-
-function signToken(array $claims, ?string $kid = TEST_KID): string
-{
-    return JWT::encode($claims, TEST_EC_PRIVATE_KEY, 'ES256', $kid);
-}
-
-function baseClaims(array $overrides = []): array
-{
-    return array_merge([
-        'sub' => (string) Str::uuid(),
-        'email' => 'shopper@example.com',
-        'aud' => 'authenticated',
-        'iat' => time(),
-        'exp' => time() + 3600,
-    ], $overrides);
-}
-
 beforeEach(function () {
     Cache::forget('supabase_jwks');
     fakeJwks();
