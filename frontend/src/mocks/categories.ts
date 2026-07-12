@@ -1,7 +1,7 @@
 import type { Category } from "@/types";
 
 /**
- * Mock categories — mirror the four MVP product categories (CLAUDE.md brand
+ * Mock categories — mirror the MVP product categories (CLAUDE.md brand
  * profile). The Phase 6 seeders reproduce these exactly so the live API is a
  * drop-in replacement for the mock data layer.
  */
@@ -41,5 +41,23 @@ export const categories: Category[] = [
       "Quiet ultrasonic humidifiers that carry fragrance as a fine, cool mist through the air.",
     imageUrl: null,
     sortOrder: 4,
+  },
+  {
+    id: "cat_birch_vase",
+    name: "Birch Vase",
+    slug: "birch-vase",
+    description:
+      "Hand-finished vessels for our reed diffusers — as considered empty as they are full.",
+    imageUrl: null,
+    sortOrder: 5,
+  },
+  {
+    id: "cat_car_fragrance",
+    name: "Car Fragrance",
+    slug: "car-fragrance",
+    description:
+      "A quiet ultrasonic diffuser and refill cartridges built for the commute — the Birchscents atmosphere, on the road.",
+    imageUrl: null,
+    sortOrder: 6,
   },
 ];

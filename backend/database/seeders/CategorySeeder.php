@@ -38,6 +38,18 @@ class CategorySeeder extends Seeder
                 'description' => 'Quiet ultrasonic humidifiers that carry fragrance as a fine, cool mist through the air.',
                 'sort_order' => 4,
             ],
+            [
+                'name' => 'Birch Vase',
+                'slug' => 'birch-vase',
+                'description' => 'Hand-finished vessels for our reed diffusers — as considered empty as they are full.',
+                'sort_order' => 5,
+            ],
+            [
+                'name' => 'Car Fragrance',
+                'slug' => 'car-fragrance',
+                'description' => 'A quiet ultrasonic diffuser and refill cartridges built for the commute — the Birchscents atmosphere, on the road.',
+                'sort_order' => 6,
+            ],
         ];
 
         foreach ($categories as $category) {

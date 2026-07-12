@@ -223,6 +223,80 @@ class ProductSeeder extends Seeder
                     ['sku' => 'BS-HU-AUR-STD', 'label' => 'Standard', 'price_pesewas' => 21000, 'compare_at_pesewas' => null, 'stock' => 27, 'is_active' => true],
                 ],
             ],
+
+            // ----------------------------- Birch Vase ------------------------------
+            [
+                'categorySlug' => 'birch-vase',
+                'name' => 'The Ashwood Vase',
+                'slug' => 'ashwood-vase',
+                'tagline' => 'A vessel worth keeping',
+                'description' => 'Hand-glazed stoneware in a warm ashwood finish, sized for our 100ml reed diffuser refills — as beautiful empty as it is full.',
+                'scent_notes' => 'Fits all Birchscents 100ml reed diffuser refills',
+                'gallery' => [],
+                'is_featured' => false,
+                'is_active' => true,
+                'variants' => [
+                    ['sku' => 'BS-BV-ASH-STD', 'label' => 'Standard', 'price_pesewas' => 12000, 'compare_at_pesewas' => null, 'stock' => 24, 'is_active' => true],
+                ],
+            ],
+            [
+                'categorySlug' => 'birch-vase',
+                'name' => 'The Ivory Stone Vase',
+                'slug' => 'ivory-stone-vase',
+                'tagline' => 'Clean and considered',
+                'description' => 'A matte ivory stoneware vessel with a soft, tactile finish — pairs with any Birchscents reed diffuser refill.',
+                'scent_notes' => 'Fits all Birchscents 100ml reed diffuser refills',
+                'gallery' => [],
+                'is_featured' => false,
+                'is_active' => true,
+                'variants' => [
+                    ['sku' => 'BS-BV-IVR-STD', 'label' => 'Standard', 'price_pesewas' => 13000, 'compare_at_pesewas' => null, 'stock' => 20, 'is_active' => true],
+                ],
+            ],
+
+            // --------------------------- Car Fragrance -----------------------------
+            [
+                'categorySlug' => 'car-fragrance',
+                'name' => 'Aura Car Diffuser',
+                'slug' => 'aura-car-diffuser',
+                'tagline' => 'Your commute, elevated',
+                'description' => 'A compact ultrasonic diffuser that clips to your vent and carries a fine, even mist through the car — quiet, cordless, USB-powered.',
+                'scent_notes' => 'Pairs with any Birchscents car refill',
+                'gallery' => [],
+                'is_featured' => true,
+                'is_active' => true,
+                'variants' => [
+                    ['sku' => 'BS-CF-AUR-STD', 'label' => 'Standard', 'price_pesewas' => 19500, 'compare_at_pesewas' => null, 'stock' => 30, 'is_active' => true],
+                ],
+            ],
+            [
+                'categorySlug' => 'car-fragrance',
+                'name' => 'Snow Melon Car Refill',
+                'slug' => 'snow-melon-car-refill',
+                'tagline' => 'Signature scent, on the road',
+                'description' => 'The crisp sweetness of Snow Melon, concentrated into a refill cartridge built for the Aura Car Diffuser.',
+                'scent_notes' => 'Crisp melon, sweet citrus, clean musk',
+                'gallery' => [],
+                'is_featured' => false,
+                'is_active' => true,
+                'variants' => [
+                    ['sku' => 'BS-CF-SNM-STD', 'label' => 'Standard', 'price_pesewas' => 6500, 'compare_at_pesewas' => null, 'stock' => 50, 'is_active' => true],
+                ],
+            ],
+            [
+                'categorySlug' => 'car-fragrance',
+                'name' => 'Citrus Grove Car Refill',
+                'slug' => 'citrus-grove-car-refill',
+                'tagline' => 'Bright and clean, on the road',
+                'description' => 'Sun-ripe citrus and crushed herbs in a refill cartridge built for the Aura Car Diffuser.',
+                'scent_notes' => 'Orange, lemon, basil',
+                'gallery' => [],
+                'is_featured' => false,
+                'is_active' => true,
+                'variants' => [
+                    ['sku' => 'BS-CF-CIT-STD', 'label' => 'Standard', 'price_pesewas' => 6500, 'compare_at_pesewas' => null, 'stock' => 45, 'is_active' => true],
+                ],
+            ],
         ];
     }
 }
