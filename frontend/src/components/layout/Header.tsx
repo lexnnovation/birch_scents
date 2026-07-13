@@ -10,8 +10,7 @@ export const primaryNav = [
   { label: "Room Sprays", href: "/shop/room-sprays" },
   { label: "Fragrance Oils", href: "/shop/fragrance-oils" },
   { label: "Humidifiers", href: "/shop/humidifiers" },
-  { label: "Snow Melon", href: "/products/snow-melon" },
-  { label: "For Business", href: "/#for-business" },
+  { label: "For Wholesalers", href: "/#for-wholesalers" },
 ];
 
 export function Header() {

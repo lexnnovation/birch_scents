@@ -9,8 +9,7 @@ const shopLinks = [
 
 const helpLinks = [
   { label: "Shop All", href: "/shop" },
-  { label: "Snow Melon", href: "/products/snow-melon" },
-  { label: "For Business", href: "/#for-business" },
+  { label: "For Wholesalers", href: "/#for-wholesalers" },
   { label: "My Orders", href: "/orders" },
 ];
 
