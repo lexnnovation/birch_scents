@@ -11,10 +11,20 @@ import type { CartItem } from "@/types";
 interface CartState {
   items: CartItem[];
   isOpen: boolean;
+  /**
+   * Order number awaiting payment confirmation, set right before the
+   * Paystack redirect. `/checkout/callback` clears the cart the moment it
+   * confirms — but if the webhook lands after that page's polling window
+   * (or after the shopper has already navigated away), this survives
+   * across reloads so the next storefront page load can catch up and
+   * clear the cart instead of leaving already-purchased items stuck in it.
+   */
+  pendingOrderNumber: string | null;
   add: (item: Omit<CartItem, "quantity">, qty?: number) => void;
   updateQty: (variantId: string, quantity: number) => void;
   remove: (variantId: string) => void;
   clear: () => void;
+  setPendingOrder: (orderNumber: string | null) => void;
   openCart: () => void;
   closeCart: () => void;
   setOpen: (open: boolean) => void;
@@ -25,6 +35,7 @@ export const useCart = create<CartState>()(
     (set) => ({
       items: [],
       isOpen: false,
+      pendingOrderNumber: null,
       add: (item, qty = 1) =>
         set((s) => {
           const existing = s.items.find((i) => i.variantId === item.variantId);
@@ -44,7 +55,8 @@ export const useCart = create<CartState>()(
         })),
       remove: (variantId) =>
         set((s) => ({ items: s.items.filter((i) => i.variantId !== variantId) })),
-      clear: () => set({ items: [] }),
+      clear: () => set({ items: [], pendingOrderNumber: null }),
+      setPendingOrder: (orderNumber) => set({ pendingOrderNumber: orderNumber }),
       openCart: () => set({ isOpen: true }),
       closeCart: () => set({ isOpen: false }),
       setOpen: (open) => set({ isOpen: open }),
@@ -52,7 +64,7 @@ export const useCart = create<CartState>()(
     {
       name: "birchscents-cart",
       storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({ items: s.items }),
+      partialize: (s) => ({ items: s.items, pendingOrderNumber: s.pendingOrderNumber }),
     },
   ),
 );

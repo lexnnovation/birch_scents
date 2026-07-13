@@ -69,7 +69,7 @@ birch_scents/
 │   │   │   ├── (auth)/           # minimal centered layout
 │   │   │   │   ├── login/page.tsx
 │   │   │   │   └── register/page.tsx
-│   │   │   ├── admin/            # admin layout, guarded by role
+│   │   │   ├── bo/                # admin layout, guarded by role — deliberately not "admin"
 │   │   │   │   ├── products/
 │   │   │   │   ├── inventory/
 │   │   │   │   └── orders/
@@ -152,7 +152,7 @@ The snake_case→camelCase translation happens in exactly one place per directio
 ## 5. API Conventions
 
 - Base path `/api/v1`. Version in the URL from day one.
-- Resource routes: `GET /products`, `GET /products/{slug}`, `GET /categories`, `POST /checkout`, `GET /orders`, `GET /orders/{orderNumber}`, admin under `/admin/*` (e.g. `GET|POST /admin/products`, `PATCH /admin/orders/{id}`).
+- Resource routes: `GET /products`, `GET /products/{slug}`, `GET /categories`, `POST /checkout`, `GET /orders`, `GET /orders/{orderNumber}`, admin under `/bo/*` (e.g. `GET|POST /bo/products`, `PATCH /bo/orders/{id}`) — deliberately not `/admin/*`; see §6.
 - **Success envelope:** `{ "data": … }`; lists add `{ "meta": { "currentPage", "perPage", "total", "lastPage" } }` (Laravel paginator via Resources).
 - **Error envelope:** `{ "message": "…", "errors": { "field": ["…"] } }` (Laravel default). Status codes: 200/201, 401 unauthenticated, 403 unauthorized, 404, 422 validation, 409 business conflict (e.g. insufficient stock at checkout).
 - Every endpoint validates input through a FormRequest. **Never trust frontend data** — prices, totals, and stock are always recomputed server-side.
@@ -186,12 +186,12 @@ Laravel VerifySupabaseJwt middleware:
     syncing email/name on first sight
   – binds the User to the request
         ↓
-Route middleware authorizes: auth-only routes, `EnsureAdmin` for /admin/*
+Route middleware authorizes: auth-only routes, `EnsureAdmin` for /bo/*
 ```
 
 **Rules**
-- Laravel never stores passwords and has no login routes. Password reset, email verification, OAuth — all Supabase.
-- Admin status is the `is_admin` boolean on the local `users` table, set manually in the DB for MVP. It is **never** derived from JWT claims or frontend state. The admin UI hides itself for non-admins, but the API middleware is the real gate.
+- Laravel never stores passwords and has no login routes. Password reset, email verification, OAuth — all Supabase. (This also means there is no login form anywhere to brute-force — the admin route naming below is obscurity on top of that, not a substitute for it.)
+- Admin status is the `is_admin` boolean on the local `users` table, set manually in the DB for MVP. It is **never** derived from JWT claims or frontend state. The frontend admin shell (`/bo`) reflects this: it renders nothing admin-shaped — no sidebar, no nav, no page content — until an admin-scoped API call confirms access; a non-admin gets redirected to `/shop` before anything is painted, with no "forbidden" messaging. The API middleware (`EnsureAdmin`) is the real gate regardless. The route is named `/bo` rather than `/admin` and is never linked from anywhere in the storefront UI, purely to keep it out of casual discovery/scanners — it is not itself a security control.
 - Reject tokens with unexpected `alg`, missing `sub`, or expired `exp`. Never decode-without-verify.
 - Supabase's current default signs access tokens asymmetrically (ES256) and publishes public keys at `{SUPABASE_URL}/auth/v1/.well-known/jwks.json` — no shared secret lives in `backend/.env`. (Older projects may still use a legacy HS256 shared secret; confirm which your project issues — decode a real token's header — before assuming either.)
 - The frontend Supabase client is used for auth **only** — never for table reads/writes.

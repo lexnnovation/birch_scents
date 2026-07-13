@@ -10,6 +10,8 @@ export const DELIVERY_FEE_PESEWAS = 2000;
 
 export interface CheckoutResult {
   authorizationUrl: string;
+  /** Resumes the same server-initialized transaction in Paystack's inline popup — see checkout/page.tsx. */
+  accessCode: string;
   reference: string;
   orderNumber: string;
 }

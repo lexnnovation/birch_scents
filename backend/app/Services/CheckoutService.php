@@ -23,7 +23,7 @@ class CheckoutService
 {
     public function __construct(private readonly PaystackService $paystackService) {}
 
-    /** @return array{order: Order, authorizationUrl: string} */
+    /** @return array{order: Order, authorizationUrl: string, accessCode: string} */
     public function checkout(User $user, array $items, array $delivery): array
     {
         return DB::transaction(function () use ($user, $items, $delivery) {
@@ -110,7 +110,11 @@ class CheckoutService
                 callbackUrl: $callbackUrl,
             );
 
-            return ['order' => $order->load('items', 'payment'), 'authorizationUrl' => $init['authorizationUrl']];
+            return [
+                'order' => $order->load('items', 'payment'),
+                'authorizationUrl' => $init['authorizationUrl'],
+                'accessCode' => $init['accessCode'],
+            ];
         });
     }
 

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import type { Order, OrderStatus } from "@/types";
-import { useOrders } from "@/stores/orders";
-import { useHydrated } from "@/lib/use-hydrated";
+import type { ApiError, Order, OrderStatus } from "@/types";
+import { getAdminOrders, updateOrderStatus } from "@/lib/api/admin";
 import { formatPesewas } from "@/lib/money";
 import { AdminPageHeader } from "./AdminPageHeader";
 import { OrderStatusBadge } from "@/components/order/OrderStatusBadge";
@@ -25,8 +25,16 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const STATUSES: OrderStatus[] = ["pending", "paid", "processing", "delivered", "cancelled"];
+/** Mirrors the backend's `OrderStatus::allowedTransitions()` so the admin can't pick a move the API will reject. */
+const ALLOWED_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
+  pending: ["paid", "cancelled"],
+  paid: ["processing", "cancelled"],
+  processing: ["delivered", "cancelled"],
+  delivered: [],
+  cancelled: [],
+};
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GH", {
@@ -37,24 +45,54 @@ function formatDate(iso: string) {
 }
 
 export function AdminOrders() {
-  const hydrated = useHydrated();
-  const orders = useOrders((s) => s.orders);
-  const setStatus = useOrders((s) => s.setStatus);
+  const [orders, setOrders] = useState<Order[] | null>(null);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [updating, setUpdating] = useState(false);
+  const router = useRouter();
 
-  const list = hydrated ? orders : [];
+  const load = useCallback(
+    (targetPage: number) => {
+      getAdminOrders({ page: targetPage })
+        .then((res) => {
+          setOrders(res.data);
+          setPage(res.meta.currentPage);
+          setLastPage(res.meta.lastPage);
+        })
+        .catch((error: ApiError) => {
+          if (error.status === 403) return router.replace("/shop");
+          toast.error(error.message ?? "Could not load orders.");
+        });
+    },
+    [router],
+  );
+
+  useEffect(() => {
+    load(1);
+  }, [load]);
+
+  const list = orders ?? [];
   const selected = list.find((o) => o.id === selectedId) ?? null;
 
-  function changeStatus(order: Order, status: OrderStatus) {
-    setStatus(order.orderNumber, status);
-    toast.success(`${order.orderNumber} → ${status}`);
+  async function changeStatus(order: Order, status: OrderStatus) {
+    setUpdating(true);
+    try {
+      const updated = await updateOrderStatus(order.id, status);
+      setOrders((prev) => (prev ? prev.map((o) => (o.id === updated.id ? updated : o)) : prev));
+      toast.success(`${order.orderNumber} → ${status}`);
+    } catch (error) {
+      toast.error((error as ApiError).message ?? "Could not update order status.");
+    } finally {
+      setUpdating(false);
+    }
   }
 
   return (
     <>
       <AdminPageHeader title="Orders" description="Customer orders and their fulfilment status." />
 
-      {hydrated && list.length === 0 ? (
+      {orders !== null && list.length === 0 ? (
         <div className="border-border rounded-2xl border border-dashed py-16 text-center">
           <p className="text-muted-foreground text-sm">No orders yet.</p>
           <p className="text-muted-foreground mt-1 text-xs">
@@ -66,40 +104,78 @@ export function AdminOrders() {
           </p>
         </div>
       ) : (
-        <div className="border-border overflow-hidden rounded-2xl border">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-sm">
-              <thead className="bg-secondary/50 text-muted-foreground text-left text-xs tracking-wide uppercase">
-                <tr>
-                  <th className="px-4 py-3 font-medium">Order</th>
-                  <th className="px-4 py-3 font-medium">Date</th>
-                  <th className="px-4 py-3 font-medium">Customer</th>
-                  <th className="px-4 py-3 font-medium">Total</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3" />
-                </tr>
-              </thead>
-              <tbody className="divide-border divide-y">
-                {list.map((o) => (
-                  <tr key={o.id} className="hover:bg-muted/40 transition-colors">
-                    <td className="px-4 py-3 font-medium">{o.orderNumber}</td>
-                    <td className="text-muted-foreground px-4 py-3">{formatDate(o.createdAt)}</td>
-                    <td className="text-muted-foreground px-4 py-3">{o.delivery.name}</td>
-                    <td className="px-4 py-3 tabular-nums">{formatPesewas(o.totalPesewas)}</td>
-                    <td className="px-4 py-3">
-                      <OrderStatusBadge status={o.status} />
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <Button variant="outline" size="sm" onClick={() => setSelectedId(o.id)}>
-                        View
-                      </Button>
-                    </td>
+        <>
+          <div className="border-border overflow-hidden rounded-2xl border">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[640px] text-sm">
+                <thead className="bg-secondary/50 text-muted-foreground text-left text-xs tracking-wide uppercase">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Order</th>
+                    <th className="px-4 py-3 font-medium">Date</th>
+                    <th className="px-4 py-3 font-medium">Customer</th>
+                    <th className="px-4 py-3 font-medium">Total</th>
+                    <th className="px-4 py-3 font-medium">Status</th>
+                    <th className="px-4 py-3" />
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-border divide-y">
+                  {orders === null
+                    ? Array.from({ length: 5 }).map((_, i) => (
+                        <tr key={i}>
+                          <td className="px-4 py-4" colSpan={6}>
+                            <Skeleton className="h-5 w-full" />
+                          </td>
+                        </tr>
+                      ))
+                    : list.map((o) => (
+                        <tr key={o.id} className="hover:bg-muted/40 transition-colors">
+                          <td className="px-4 py-3 font-medium">{o.orderNumber}</td>
+                          <td className="text-muted-foreground px-4 py-3">
+                            {formatDate(o.createdAt)}
+                          </td>
+                          <td className="text-muted-foreground px-4 py-3">{o.delivery.name}</td>
+                          <td className="px-4 py-3 tabular-nums">
+                            {formatPesewas(o.totalPesewas)}
+                          </td>
+                          <td className="px-4 py-3">
+                            <OrderStatusBadge status={o.status} />
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <Button variant="outline" size="sm" onClick={() => setSelectedId(o.id)}>
+                              View
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+
+          {lastPage > 1 && (
+            <div className="mt-4 flex items-center justify-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page <= 1}
+                onClick={() => load(page - 1)}
+              >
+                Previous
+              </Button>
+              <span className="text-muted-foreground text-xs">
+                Page {page} of {lastPage}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page >= lastPage}
+                onClick={() => load(page + 1)}
+              >
+                Next
+              </Button>
+            </div>
+          )}
+        </>
       )}
 
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelectedId(null)}>
@@ -118,13 +194,17 @@ export function AdminOrders() {
                   </p>
                   <Select
                     value={selected.status}
-                    onValueChange={(s) => changeStatus(selected, s as OrderStatus)}
+                    onValueChange={(s) => void changeStatus(selected, s as OrderStatus)}
+                    disabled={updating || ALLOWED_TRANSITIONS[selected.status].length === 0}
                   >
                     <SelectTrigger className="h-10 w-56">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {STATUSES.map((s) => (
+                      <SelectItem value={selected.status} className="capitalize">
+                        {selected.status}
+                      </SelectItem>
+                      {ALLOWED_TRANSITIONS[selected.status].map((s) => (
                         <SelectItem key={s} value={s} className="capitalize">
                           {s}
                         </SelectItem>

@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Minus, Plus } from "lucide-react";
-import type { Product } from "@/types";
-import { getAdminProducts } from "@/lib/api/admin";
+import { toast } from "sonner";
+import type { ApiError, Product } from "@/types";
+import { getAdminProducts, updateVariantStock } from "@/lib/api/admin";
 import { AdminPageHeader } from "./AdminPageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,22 +36,50 @@ const LOW_STOCK = 10;
 
 export function AdminInventory() {
   const [rows, setRows] = useState<Row[] | null>(null);
+  const router = useRouter();
+  /** Last server-confirmed stock per variant — the rollback target, distinct from the (possibly mid-edit) UI value in `rows`. */
+  const committedRef = useRef<Record<string, number>>({});
 
   useEffect(() => {
-    getAdminProducts().then((products) => setRows(toRows(products)));
-  }, []);
+    getAdminProducts()
+      .then((products) => {
+        const list = toRows(products);
+        committedRef.current = Object.fromEntries(list.map((r) => [r.variantId, r.stock]));
+        setRows(list);
+      })
+      .catch((error: ApiError) => {
+        if (error.status === 403) return router.replace("/shop");
+        toast.error(error.message ?? "Could not load inventory.");
+      });
+  }, [router]);
 
-  function setStock(variantId: string, next: number) {
+  const setStock = useCallback((variantId: string, next: number) => {
     const stock = Math.max(0, Math.round(next));
     setRows((prev) =>
       prev ? prev.map((r) => (r.variantId === variantId ? { ...r, stock } : r)) : prev,
     );
-  }
+  }, []);
 
-  function adjust(variantId: string, delta: number) {
-    const row = rows?.find((r) => r.variantId === variantId);
-    if (!row) return;
-    setStock(variantId, row.stock + delta);
+  const commitStock = useCallback(
+    (variantId: string, stock: number) => {
+      const previous = committedRef.current[variantId];
+      if (stock === previous) return;
+      updateVariantStock(variantId, stock)
+        .then(() => {
+          committedRef.current[variantId] = stock;
+        })
+        .catch((error: ApiError) => {
+          toast.error(error.message ?? "Could not update stock.");
+          setStock(variantId, previous);
+        });
+    },
+    [setStock],
+  );
+
+  function adjust(row: Row, delta: number) {
+    const next = Math.max(0, row.stock + delta);
+    setStock(row.variantId, next);
+    commitStock(row.variantId, next);
   }
 
   return (
@@ -95,7 +125,7 @@ export function AdminInventory() {
                               size="icon-sm"
                               aria-label={`Decrease ${r.productName} ${r.label} stock`}
                               disabled={r.stock === 0}
-                              onClick={() => adjust(r.variantId, -1)}
+                              onClick={() => adjust(r, -1)}
                             >
                               <Minus className="size-3.5" />
                             </Button>
@@ -107,6 +137,13 @@ export function AdminInventory() {
                                   Number(e.target.value.replace(/[^0-9]/g, "") || 0),
                                 )
                               }
+                              onBlur={(e) => {
+                                const next = Math.max(
+                                  0,
+                                  Number(e.target.value.replace(/[^0-9]/g, "") || 0),
+                                );
+                                commitStock(r.variantId, next);
+                              }}
                               inputMode="numeric"
                               aria-label={`${r.productName} ${r.label} stock`}
                               className={cn(
@@ -118,7 +155,7 @@ export function AdminInventory() {
                               variant="outline"
                               size="icon-sm"
                               aria-label={`Increase ${r.productName} ${r.label} stock`}
-                              onClick={() => adjust(r.variantId, 1)}
+                              onClick={() => adjust(r, 1)}
                             >
                               <Plus className="size-3.5" />
                             </Button>
@@ -136,11 +173,6 @@ export function AdminInventory() {
           </table>
         </div>
       </div>
-
-      <p className="text-muted-foreground mt-4 text-xs">
-        Adjustments are local to this session — Phase 10 wires them to{" "}
-        <code>PATCH /admin/variants/&#123;id&#125;/stock</code>.
-      </p>
     </>
   );
 }

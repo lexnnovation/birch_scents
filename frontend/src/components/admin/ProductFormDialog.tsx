@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import type { Category, Product, ProductVariant, VariantLabel } from "@/types";
+import { toast } from "sonner";
+import type { ApiError, Category, Product, VariantLabel } from "@/types";
+import {
+  createProduct as apiCreateProduct,
+  createVariant as apiCreateVariant,
+  deleteVariant as apiDeleteVariant,
+  updateProduct as apiUpdateProduct,
+  updateVariant as apiUpdateVariant,
+} from "@/lib/api/admin";
 import {
   Dialog,
   DialogContent,
@@ -74,13 +82,13 @@ function seedVariants(product: Product | null): VariantDraft[] {
 export function ProductFormDialog({
   product,
   categories,
-  onSave,
+  onSaved,
   onClose,
 }: {
   /** null → create a new product */
   product: Product | null;
   categories: Category[];
-  onSave: (product: Product) => void;
+  onSaved: () => void;
   onClose: () => void;
 }) {
   const [name, setName] = useState(product?.name ?? "");
@@ -94,8 +102,9 @@ export function ProductFormDialog({
   const [isFeatured, setIsFeatured] = useState(product?.isFeatured ?? false);
   const [variants, setVariants] = useState<VariantDraft[]>(() => seedVariants(product));
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
-  function updateVariant(id: string, patch: Partial<VariantDraft>) {
+  function updateVariantDraft(id: string, patch: Partial<VariantDraft>) {
     setVariants((vs) => vs.map((v) => (v.id === id ? { ...v, ...patch } : v)));
   }
   function addVariant() {
@@ -115,7 +124,11 @@ export function ProductFormDialog({
     setVariants((vs) => (vs.length > 1 ? vs.filter((v) => v.id !== id) : vs));
   }
 
-  function save() {
+  function isNewVariant(id: string) {
+    return id.startsWith("var_new_");
+  }
+
+  async function save() {
     if (!name.trim()) return setError("Enter a product name.");
     if (!categorySlug) return setError("Choose a category.");
     for (const v of variants) {
@@ -125,42 +138,62 @@ export function ProductFormDialog({
       if (v.stock === "") return setError("Every variant needs a stock count.");
     }
 
-    const category = categories.find((c) => c.slug === categorySlug);
-    const built: Product = {
-      id: product?.id ?? `prod_${slugify(name)}_${Date.now()}`,
-      categorySlug,
-      categoryName: category?.name ?? "",
-      name: name.trim(),
-      slug: product?.slug ?? slugify(name),
-      tagline: tagline.trim(),
-      description: description.trim(),
-      scentNotes: scentNotes.trim(),
-      imageUrl: product?.imageUrl ?? null,
-      gallery: product?.gallery ?? [],
-      isFeatured,
-      isActive,
-      variants: variants.map<ProductVariant>((v) => ({
-        id: v.id,
-        label: v.label,
-        sku: v.sku.trim(),
-        pricePesewas: parseInt(v.price, 10),
-        compareAtPesewas: v.compareAtPesewas,
-        stock: parseInt(v.stock, 10),
-        isActive: true,
-      })),
-    };
-    onSave(built);
+    setError(null);
+    setSaving(true);
+    try {
+      const productInput = {
+        categorySlug,
+        name: name.trim(),
+        slug: product?.slug ?? slugify(name),
+        tagline: tagline.trim(),
+        description: description.trim(),
+        scentNotes: scentNotes.trim(),
+        isFeatured,
+        isActive,
+      };
+
+      const savedProduct = product
+        ? await apiUpdateProduct(product.id, productInput)
+        : await apiCreateProduct(productInput);
+
+      const originalVariants = product?.variants ?? [];
+      const draftIds = new Set(variants.filter((v) => !isNewVariant(v.id)).map((v) => v.id));
+
+      await Promise.all([
+        ...variants.map((v) => {
+          const input = {
+            label: v.label,
+            sku: v.sku.trim(),
+            pricePesewas: parseInt(v.price, 10),
+            compareAtPesewas: v.compareAtPesewas,
+            stock: parseInt(v.stock, 10),
+          };
+          return isNewVariant(v.id)
+            ? apiCreateVariant(savedProduct.id, input)
+            : apiUpdateVariant(v.id, input);
+        }),
+        ...originalVariants
+          .filter((v) => !draftIds.has(v.id))
+          .map((v) => apiDeleteVariant(v.id)),
+      ]);
+
+      toast.success(product ? "Product updated" : "Product created");
+      onSaved();
+    } catch (err) {
+      const apiError = err as ApiError;
+      const firstFieldError = apiError.errors ? Object.values(apiError.errors)[0]?.[0] : undefined;
+      setError(firstFieldError ?? apiError.message ?? "Something went wrong. Try again.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
-    <Dialog open onOpenChange={(o) => !o && onClose()}>
+    <Dialog open onOpenChange={(o) => !o && !saving && onClose()}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>{product ? "Edit product" : "New product"}</DialogTitle>
-          <DialogDescription>
-            Prices are stored in pesewas (GH₵ × 100). Nothing here is persisted — this is the mock
-            admin shell.
-          </DialogDescription>
+          <DialogDescription>Prices are stored in pesewas (GH₵ × 100).</DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-5 py-2">
@@ -246,7 +279,7 @@ export function ProductFormDialog({
                     <Select
                       value={v.label}
                       onValueChange={(label) =>
-                        updateVariant(v.id, { label: label as VariantLabel })
+                        updateVariantDraft(v.id, { label: label as VariantLabel })
                       }
                     >
                       <SelectTrigger className="h-9 w-full" aria-label="Variant size">
@@ -262,7 +295,7 @@ export function ProductFormDialog({
                     </Select>
                     <Input
                       value={v.sku}
-                      onChange={(e) => updateVariant(v.id, { sku: e.target.value })}
+                      onChange={(e) => updateVariantDraft(v.id, { sku: e.target.value })}
                       placeholder="SKU"
                       aria-label="SKU"
                       className="h-9"
@@ -270,7 +303,7 @@ export function ProductFormDialog({
                     <div>
                       <Input
                         value={v.price}
-                        onChange={(e) => updateVariant(v.id, { price: onlyDigits(e.target.value) })}
+                        onChange={(e) => updateVariantDraft(v.id, { price: onlyDigits(e.target.value) })}
                         placeholder="Price (pesewas)"
                         inputMode="numeric"
                         aria-label="Price in pesewas"
@@ -282,7 +315,7 @@ export function ProductFormDialog({
                     </div>
                     <Input
                       value={v.stock}
-                      onChange={(e) => updateVariant(v.id, { stock: onlyDigits(e.target.value) })}
+                      onChange={(e) => updateVariantDraft(v.id, { stock: onlyDigits(e.target.value) })}
                       placeholder="Stock"
                       inputMode="numeric"
                       aria-label="Stock"
@@ -309,11 +342,11 @@ export function ProductFormDialog({
         </div>
 
         <DialogFooter>
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button type="button" variant="outline" onClick={onClose} disabled={saving}>
             Cancel
           </Button>
-          <Button type="button" variant="brand" onClick={save}>
-            {product ? "Save changes" : "Create product"}
+          <Button type="button" variant="brand" onClick={() => void save()} disabled={saving}>
+            {saving ? "Saving…" : product ? "Save changes" : "Create product"}
           </Button>
         </DialogFooter>
       </DialogContent>

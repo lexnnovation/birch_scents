@@ -20,6 +20,7 @@ class CheckoutController extends Controller
 
         return response()->json(['data' => [
             'authorizationUrl' => $result['authorizationUrl'],
+            'accessCode' => $result['accessCode'],
             'reference' => $order->payment->reference,
             'orderNumber' => $order->order_number,
         ]], 201);

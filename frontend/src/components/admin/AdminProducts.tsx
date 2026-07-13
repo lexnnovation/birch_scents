@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
-import type { Category, Product } from "@/types";
-import { getAdminProducts } from "@/lib/api/admin";
+import type { ApiError, Category, Product } from "@/types";
+import { deleteProduct, getAdminProducts } from "@/lib/api/admin";
 import { getCategories } from "@/lib/api/categories";
 import { formatPesewas } from "@/lib/money";
 import { AdminPageHeader } from "./AdminPageHeader";
@@ -27,20 +28,36 @@ export function AdminProducts() {
   const [items, setItems] = useState<Product[] | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [form, setForm] = useState<FormState>(null);
+  const router = useRouter();
+
+  const load = useCallback(() => {
+    getAdminProducts()
+      .then(setItems)
+      .catch((error: ApiError) => {
+        if (error.status === 403) return router.replace("/shop");
+        toast.error(error.message ?? "Could not load products.");
+      });
+    getCategories().then(setCategories);
+  }, [router]);
 
   useEffect(() => {
-    getAdminProducts().then(setItems);
-    getCategories().then(setCategories);
-  }, []);
+    load();
+  }, [load]);
 
-  function handleSave(product: Product) {
-    setItems((prev) => {
-      const list = prev ?? [];
-      const exists = list.some((p) => p.id === product.id);
-      return exists ? list.map((p) => (p.id === product.id ? product : p)) : [product, ...list];
-    });
-    toast.success(form?.product ? "Product updated" : "Product created");
+  function handleSaved() {
     setForm(null);
+    load();
+  }
+
+  async function handleDelete(product: Product) {
+    if (!window.confirm(`Delete "${product.name}"? This cannot be undone.`)) return;
+    try {
+      await deleteProduct(product.id);
+      toast.success("Product deleted");
+      load();
+    } catch (error) {
+      toast.error((error as ApiError).message ?? "Could not delete product.");
+    }
   }
 
   return (
@@ -99,9 +116,17 @@ export function AdminProducts() {
                           <span className="text-muted-foreground ml-2 text-xs">· Featured</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-4 py-3 text-right whitespace-nowrap">
                         <Button variant="outline" size="sm" onClick={() => setForm({ product: p })}>
                           Edit
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-destructive hover:text-destructive ml-2"
+                          onClick={() => void handleDelete(p)}
+                        >
+                          Delete
                         </Button>
                       </td>
                     </tr>
@@ -115,7 +140,7 @@ export function AdminProducts() {
         <ProductFormDialog
           product={form.product}
           categories={categories}
-          onSave={handleSave}
+          onSaved={handleSaved}
           onClose={() => setForm(null)}
         />
       )}

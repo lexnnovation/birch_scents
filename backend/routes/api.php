@@ -39,8 +39,10 @@ Route::middleware('auth.supabase')->group(function () {
     Route::post('checkout', [CheckoutController::class, 'store']);
 });
 
-// Admin routes — full catalog visibility + writes.
-Route::prefix('admin')->middleware(['auth.supabase', 'admin'])->group(function () {
+// Admin routes — full catalog visibility + writes. Prefix is deliberately
+// not "admin" — a less guessable path for a route with no login form to
+// brute-force in the first place (auth is Supabase, not Laravel).
+Route::prefix('bo')->middleware(['auth.supabase', 'admin'])->group(function () {
     Route::get('products', [AdminProductController::class, 'index']);
     Route::post('products', [AdminProductController::class, 'store']);
     Route::patch('products/{product}', [AdminProductController::class, 'update']);

@@ -10,8 +10,8 @@ it('forbids non-admins from admin order routes', function () {
     $token = tokenFor($user->supabase_id);
     $order = Order::factory()->create();
 
-    $this->withToken($token)->getJson('/api/v1/admin/orders')->assertStatus(403);
-    $this->withToken($token)->patchJson("/api/v1/admin/orders/{$order->order_number}", ['status' => 'paid'])
+    $this->withToken($token)->getJson('/api/v1/bo/orders')->assertStatus(403);
+    $this->withToken($token)->patchJson("/api/v1/bo/orders/{$order->order_number}", ['status' => 'paid'])
         ->assertStatus(403);
 });
 
@@ -21,7 +21,7 @@ it('lists orders across all customers, filterable by status', function () {
     Order::factory()->create(['status' => OrderStatus::Paid]);
     Order::factory()->create(['status' => OrderStatus::Paid]);
 
-    $response = $this->withToken($token)->getJson('/api/v1/admin/orders?status=paid')->assertOk();
+    $response = $this->withToken($token)->getJson('/api/v1/bo/orders?status=paid')->assertOk();
 
     expect($response->json('meta.total'))->toBe(2);
 });
@@ -31,7 +31,7 @@ it('allows a valid status transition', function () {
     $order = Order::factory()->create(['status' => OrderStatus::Pending]);
 
     $response = $this->withToken($token)
-        ->patchJson("/api/v1/admin/orders/{$order->order_number}", ['status' => 'paid'])
+        ->patchJson("/api/v1/bo/orders/{$order->order_number}", ['status' => 'paid'])
         ->assertOk();
 
     $response->assertJsonPath('data.status', 'paid');
@@ -43,7 +43,7 @@ it('rejects an invalid status transition', function () {
     $order = Order::factory()->create(['status' => OrderStatus::Delivered]);
 
     $this->withToken($token)
-        ->patchJson("/api/v1/admin/orders/{$order->order_number}", ['status' => 'pending'])
+        ->patchJson("/api/v1/bo/orders/{$order->order_number}", ['status' => 'pending'])
         ->assertStatus(422);
 
     expect($order->fresh()->status)->toBe(OrderStatus::Delivered);
@@ -54,6 +54,6 @@ it('rejects an unknown status value', function () {
     $order = Order::factory()->create(['status' => OrderStatus::Pending]);
 
     $this->withToken($token)
-        ->patchJson("/api/v1/admin/orders/{$order->order_number}", ['status' => 'not-a-real-status'])
+        ->patchJson("/api/v1/bo/orders/{$order->order_number}", ['status' => 'not-a-real-status'])
         ->assertStatus(422);
 });

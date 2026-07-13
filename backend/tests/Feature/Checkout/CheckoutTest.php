@@ -60,8 +60,9 @@ it('computes totals from server-side prices, ignoring anything the client sends'
     $expectedSubtotal = 24500 * 2;
     $expectedTotal = $expectedSubtotal + config('checkout.delivery_fee_pesewas');
 
-    $response->assertJsonStructure(['data' => ['authorizationUrl', 'reference', 'orderNumber']]);
+    $response->assertJsonStructure(['data' => ['authorizationUrl', 'accessCode', 'reference', 'orderNumber']]);
     $response->assertJsonPath('data.authorizationUrl', 'https://checkout.paystack.com/real-looking-code');
+    $response->assertJsonPath('data.accessCode', 'fake-access-code');
 
     $this->assertDatabaseHas('orders', [
         'user_id' => $user->id,

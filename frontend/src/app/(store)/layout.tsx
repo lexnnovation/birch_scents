@@ -3,6 +3,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { CartOrderSync } from "@/components/cart/CartOrderSync";
 
 export default function StoreLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,6 +16,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
       <div className="h-20 md:hidden" />
       <MobileTabBar />
       <CartDrawer />
+      <CartOrderSync />
     </>
   );
 }

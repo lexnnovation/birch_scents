@@ -60,8 +60,10 @@ export default function CheckoutPage() {
 }
 
 function CheckoutForm({ items }: { items: CartItem[] }) {
+  const router = useRouter();
   const lastDelivery = useLastDelivery((s) => s.lastUsed);
   const saveDelivery = useLastDelivery((s) => s.save);
+  const setPendingOrder = useCart((s) => s.setPendingOrder);
 
   const [form, setForm] = useState<Form>(() => ({
     name: lastDelivery?.name ?? "",
@@ -110,9 +112,35 @@ function CheckoutForm({ items }: { items: CartItem[] }) {
     try {
       const result = await checkout(items, deliveryDetails);
       saveDelivery({ name: form.name, phone: form.phone, address: form.address, city: form.city });
-      // Full navigation to Paystack's hosted checkout — cart is only cleared
-      // once /checkout/callback confirms the order actually got paid.
-      window.location.href = result.authorizationUrl;
+      // Stashing the order number (survives reloads) lets any later
+      // storefront page catch up and clear the cart even if the webhook
+      // confirms after /checkout/callback has stopped polling.
+      setPendingOrder(result.orderNumber);
+
+      // Resumes the same server-initialized transaction (same amount, same
+      // reference) in a popup over this page instead of a full-page
+      // redirect — the site stays visibly Birchscents throughout. This
+      // never marks anything paid itself; onSuccess only means "go poll,"
+      // exactly like landing on /checkout/callback did before (CLAUDE.md §9).
+      // Dynamically imported: the package touches `window` at module-eval
+      // time, which crashes Next's server-render pass on a static import.
+      const { default: Paystack } = await import("@paystack/inline-js");
+      const popup = new Paystack();
+      popup.resumeTransaction(result.accessCode, {
+        onSuccess: () => {
+          router.push(`/checkout/callback?orderNumber=${encodeURIComponent(result.orderNumber)}`);
+        },
+        onCancel: () => {
+          setPlacing(false);
+        },
+        onError: () => {
+          // The popup itself failed to load (e.g. an ad/tracker blocker) —
+          // fall back to Paystack's hosted page rather than leaving the
+          // shopper stuck with no way to pay.
+          toast.error("Couldn't open the payment window — redirecting to Paystack.");
+          window.location.href = result.authorizationUrl;
+        },
+      });
     } catch (err) {
       const apiError = err as ApiError;
       const message = apiError.message || "Something went wrong placing your order. Please try again.";
@@ -196,7 +224,7 @@ function CheckoutForm({ items }: { items: CartItem[] }) {
             </p>
           )}
           <Button type="submit" size="pill" className="mt-6 w-full" disabled={placing}>
-            {placing ? "Redirecting to Paystack…" : "Place order"}
+            {placing ? "Opening payment…" : "Place order"}
           </Button>
           <p className="text-muted-foreground mt-3 text-center text-xs">
             Secure payment with Paystack
