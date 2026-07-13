@@ -17,7 +17,7 @@ class UpdateVariantRequest extends FormRequest
         $variant = $this->route('variant');
 
         return [
-            'label' => ['sometimes', 'string', 'in:50ml,100ml,Standard'],
+            'label' => ['sometimes', 'string', 'in:30ml,100ml,150ml,500ml,Standard'],
             'sku' => ['sometimes', 'string', 'max:255', Rule::unique('product_variants', 'sku')->ignore($variant)],
             'pricePesewas' => ['sometimes', 'integer', 'min:0'],
             'compareAtPesewas' => ['nullable', 'integer', 'min:0'],

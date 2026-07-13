@@ -26,37 +26,61 @@ export function ProductCard({ product }: { product: Product }) {
       <Link href={`/products/${product.slug}`} className="block">
         <div className="bg-secondary relative mb-3 aspect-square overflow-hidden rounded-xl">
           <div
-            className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.04]"
+            className={cn(
+              "absolute inset-0 transition-transform duration-500",
+              inStock && "group-hover:scale-[1.04]",
+            )}
             style={{ background: placeholderGradient(product.slug) }}
           />
-          {product.isFeatured && (
-            <span className="bg-primary text-primary-foreground absolute top-2.5 left-2.5 rounded-md px-2 py-1 text-[9px] font-semibold tracking-[0.12em] uppercase">
-              Flagship
+          {!inStock ? (
+            <span className="bg-foreground text-background absolute top-2.5 left-2.5 rounded-md px-2.5 py-1.5 text-xs font-bold tracking-[0.08em] uppercase">
+              Out of stock
             </span>
-          )}
-          {pct !== null && (
-            <span className="bg-brand text-brand-foreground absolute bottom-2.5 left-2.5 rounded-md px-2 py-1 text-[11px] font-bold">
-              {pct}% OFF
-            </span>
+          ) : (
+            <>
+              {product.isFeatured && (
+                <span className="bg-primary text-primary-foreground absolute top-2.5 left-2.5 rounded-md px-2 py-1 text-[9px] font-semibold tracking-[0.12em] uppercase">
+                  Flagship
+                </span>
+              )}
+              {pct !== null && (
+                <span className="bg-brand text-brand-foreground absolute bottom-2.5 left-2.5 rounded-md px-2 py-1 text-[11px] font-bold">
+                  {pct}% OFF
+                </span>
+              )}
+            </>
           )}
         </div>
         <p className="eyebrow">{product.categoryName}</p>
       </Link>
 
       {/* Name links to the PDP too, but sits outside the image's <Link> so
-          it can share a row with the price without nesting an anchor
-          inside another anchor. */}
-      <Link href={`/products/${product.slug}`} className="mt-1 flex items-baseline justify-between gap-2">
-        <h3 className="min-w-0 truncate text-[15px] leading-snug font-semibold tracking-tight">
+          it can share this block with the price without nesting an anchor
+          inside another anchor. Always stacked (name, then price) at every
+          breakpoint — sharing a row got cramped once a discount adds a
+          third price element ("From" + price + struck-through compare
+          price) right next to the name. */}
+      <Link href={`/products/${product.slug}`} className="mt-1 flex flex-col gap-1">
+        <h3
+          className={cn(
+            "truncate text-[15px] leading-snug font-semibold tracking-tight",
+            !inStock && "text-muted-foreground",
+          )}
+        >
           {product.name}
         </h3>
-        <span className="flex shrink-0 items-baseline gap-2">
+        <span className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
           {multi && <span className="text-muted-foreground text-xs">From</span>}
-          <span className="text-[15px] font-semibold tabular-nums">
+          <span
+            className={cn(
+              "text-[15px] font-semibold tabular-nums",
+              !inStock && "text-muted-foreground",
+            )}
+          >
             {formatPesewas(cheapest.pricePesewas)}
           </span>
           {cheapest.compareAtPesewas !== null && (
-            <span className="text-muted-foreground text-[13px] tabular-nums line-through">
+            <span className="text-muted-foreground ml-1 text-[13px] tabular-nums line-through">
               {formatPesewas(cheapest.compareAtPesewas)}
             </span>
           )}
@@ -99,57 +123,79 @@ function QuickAdd({ product }: { product: Product }) {
     setOpen(false);
   }
 
+  const detailButton = (
+    <Button
+      asChild
+      type="button"
+      variant="outline"
+      size="sm"
+      className="h-auto flex-1 rounded-full px-4 py-2 tracking-wide uppercase"
+    >
+      <Link href={`/products/${product.slug}`}>More detail</Link>
+    </Button>
+  );
+
   if (product.variants.length === 1) {
     return (
-      <Button
-        type="button"
-        size="sm"
-        className="shrink-0 uppercase tracking-wide"
-        onClick={() => add(product.variants[0])}
-      >
-        Add to cart
-      </Button>
+      <div className="flex flex-col gap-2 md:flex-row">
+        <Button
+          type="button"
+          size="sm"
+          className="h-auto flex-1 rounded-full px-4 py-2 tracking-wide uppercase"
+          onClick={() => add(product.variants[0])}
+        >
+          Add to cart
+        </Button>
+        {detailButton}
+      </div>
     );
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button type="button" size="sm" className="shrink-0 uppercase tracking-wide">
-          Add to cart
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent align="start" className="w-auto p-4">
-        <p className="eyebrow mb-2 px-1">Size</p>
-        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Size">
-          {product.variants.map((v) => {
-            const disabled = !v.isActive || v.stock <= 0;
-            const selected = v.id === variant.id;
-            return (
-              <button
-                key={v.id}
-                type="button"
-                role="radio"
-                aria-checked={selected}
-                disabled={disabled}
-                onClick={() => setVariant(v)}
-                className={cn(
-                  "rounded-full border px-5 py-2.5 text-sm transition-colors",
-                  selected
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border hover:bg-muted",
-                  disabled && "cursor-not-allowed line-through opacity-40",
-                )}
-              >
-                {v.label}
-              </button>
-            );
-          })}
-        </div>
-        <Button size="pill" className="mt-3 w-full" onClick={() => add(variant)}>
-          Add to cart
-        </Button>
-      </PopoverContent>
-    </Popover>
+    <div className="flex flex-col gap-2 md:flex-row">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            size="sm"
+            className="h-auto flex-1 rounded-full px-4 py-2 tracking-wide uppercase"
+          >
+            Add to cart
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent align="start" className="w-auto p-4">
+          <p className="eyebrow mb-2 px-1">Size</p>
+          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Size">
+            {product.variants.map((v) => {
+              const disabled = !v.isActive || v.stock <= 0;
+              const selected = v.id === variant.id;
+              return (
+                <button
+                  key={v.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  disabled={disabled}
+                  onClick={() => setVariant(v)}
+                  className={cn(
+                    "rounded-full border px-5 py-2.5 text-sm transition-colors",
+                    selected
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border hover:bg-muted",
+                    disabled && "cursor-not-allowed line-through opacity-40",
+                  )}
+                >
+                  {v.label}
+                </button>
+              );
+            })}
+          </div>
+          <Button size="pill" className="mt-3 w-full" onClick={() => add(variant)}>
+            Add to cart
+          </Button>
+        </PopoverContent>
+      </Popover>
+      {detailButton}
+    </div>
   );
 }

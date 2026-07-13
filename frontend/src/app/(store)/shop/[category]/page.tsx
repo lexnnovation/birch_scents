@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getCategories, getCategoryBySlug, getProducts } from "@/lib/api";
 import { CategoryFilter } from "@/components/product/CategoryFilter";
-import { ProductGrid } from "@/components/product/ProductGrid";
+import { CategorySizeToggle } from "@/components/product/CategorySizeToggle";
 
 type Params = { params: Promise<{ category: string }> };
 
@@ -32,7 +32,7 @@ export default async function CategoryPage({ params }: Params) {
       </header>
       <CategoryFilter categories={categories} active={category} />
       <div className="mt-10">
-        <ProductGrid products={page.data} />
+        <CategorySizeToggle products={page.data} />
       </div>
     </div>
   );

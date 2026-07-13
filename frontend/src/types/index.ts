@@ -20,7 +20,7 @@ export interface Category {
   sortOrder: number;
 }
 
-export type VariantLabel = "50ml" | "100ml" | "Standard";
+export type VariantLabel = "30ml" | "100ml" | "150ml" | "500ml" | "Standard";
 
 export interface ProductVariant {
   id: string;

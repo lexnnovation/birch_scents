@@ -62,14 +62,14 @@ it('filters products by featured flag', function () {
 
 it('shows a single active product by slug with only active variants', function () {
     $product = Product::factory()->create(['slug' => 'snow-melon']);
-    ProductVariant::factory()->create(['product_id' => $product->id, 'label' => '50ml']);
+    ProductVariant::factory()->create(['product_id' => $product->id, 'label' => '150ml']);
     ProductVariant::factory()->inactive()->create(['product_id' => $product->id, 'label' => '100ml']);
 
     $response = $this->getJson('/api/v1/products/snow-melon')->assertOk();
 
     $response->assertJsonPath('data.slug', 'snow-melon');
     expect($response->json('data.variants'))->toHaveCount(1);
-    $response->assertJsonPath('data.variants.0.label', '50ml');
+    $response->assertJsonPath('data.variants.0.label', '150ml');
 });
 
 it('404s for an inactive product slug', function () {

@@ -31,7 +31,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatPesewas } from "@/lib/money";
 
-const VARIANT_LABELS: VariantLabel[] = ["50ml", "100ml", "Standard"];
+const VARIANT_LABELS: VariantLabel[] = ["30ml", "100ml", "150ml", "500ml", "Standard"];
 
 function slugify(s: string) {
   return s
@@ -70,7 +70,7 @@ function seedVariants(product: Product | null): VariantDraft[] {
   return [
     {
       id: `var_new_${Date.now()}`,
-      label: "50ml",
+      label: "100ml",
       sku: "",
       price: "",
       stock: "",

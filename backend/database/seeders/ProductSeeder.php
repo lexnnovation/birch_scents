@@ -7,9 +7,13 @@ use App\Models\Product;
 use Illuminate\Database\Seeder;
 
 /**
- * Mirrors frontend/src/mocks/products.ts exactly — same products, variants,
- * SKUs, pesewa prices, stock, isFeatured and compareAt values — so the Phase 10
- * API swap is visually invisible (CLAUDE.md §5, PROJECT_TODO 6.6). Imagery is
+ * The single source of truth for the local/dev catalog — the frontend mock
+ * data this used to mirror (`mocks/products.ts`) was deleted once the admin
+ * screens moved off it in Phase 10.5. Sizes reflect the real catalog per
+ * category (Reed Diffusers: 100ml/150ml, Fragrance Oils: 30ml, Room Sprays:
+ * 500ml, Humidifiers/Birch Vase/Car Fragrance: Standard); prices for the
+ * relabeled sizes are illustrative placeholders pending real business
+ * pricing — edit via the admin product UI once that's decided. Imagery is
  * intentionally null until real photography lands in Phase 11.
  */
 class ProductSeeder extends Seeder
@@ -31,6 +35,12 @@ class ProductSeeder extends Seeder
             foreach ($variants as $variant) {
                 $product->variants()->updateOrCreate(['sku' => $variant['sku']], $variant);
             }
+
+            // Retires any variant no longer declared below (e.g. a size dropped
+            // from a product's lineup) — updateOrCreate above only adds/updates,
+            // never removes, so without this a relabeled/collapsed product would
+            // leave orphaned rows behind.
+            $product->variants()->whereNotIn('sku', collect($variants)->pluck('sku'))->delete();
         }
     }
 
@@ -52,8 +62,8 @@ class ProductSeeder extends Seeder
                 'is_featured' => true,
                 'is_active' => true,
                 'variants' => [
-                    ['sku' => 'BS-RD-SNM-50', 'label' => '50ml', 'price_pesewas' => 18000, 'compare_at_pesewas' => null, 'stock' => 40, 'is_active' => true],
                     ['sku' => 'BS-RD-SNM-100', 'label' => '100ml', 'price_pesewas' => 24500, 'compare_at_pesewas' => 28500, 'stock' => 32, 'is_active' => true],
+                    ['sku' => 'BS-RD-SNM-150', 'label' => '150ml', 'price_pesewas' => 32000, 'compare_at_pesewas' => null, 'stock' => 40, 'is_active' => true],
                 ],
             ],
             [
@@ -67,8 +77,8 @@ class ProductSeeder extends Seeder
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
-                    ['sku' => 'BS-RD-COT-50', 'label' => '50ml', 'price_pesewas' => 16000, 'compare_at_pesewas' => null, 'stock' => 25, 'is_active' => true],
                     ['sku' => 'BS-RD-COT-100', 'label' => '100ml', 'price_pesewas' => 22000, 'compare_at_pesewas' => null, 'stock' => 18, 'is_active' => true],
+                    ['sku' => 'BS-RD-COT-150', 'label' => '150ml', 'price_pesewas' => 29000, 'compare_at_pesewas' => null, 'stock' => 25, 'is_active' => true],
                 ],
             ],
             [
@@ -82,8 +92,8 @@ class ProductSeeder extends Seeder
                 'is_featured' => true,
                 'is_active' => true,
                 'variants' => [
-                    ['sku' => 'BS-RD-VEL-50', 'label' => '50ml', 'price_pesewas' => 19000, 'compare_at_pesewas' => null, 'stock' => 22, 'is_active' => true],
                     ['sku' => 'BS-RD-VEL-100', 'label' => '100ml', 'price_pesewas' => 26000, 'compare_at_pesewas' => null, 'stock' => 15, 'is_active' => true],
+                    ['sku' => 'BS-RD-VEL-150', 'label' => '150ml', 'price_pesewas' => 34000, 'compare_at_pesewas' => null, 'stock' => 22, 'is_active' => true],
                 ],
             ],
             [
@@ -97,8 +107,8 @@ class ProductSeeder extends Seeder
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
-                    ['sku' => 'BS-RD-WTF-50', 'label' => '50ml', 'price_pesewas' => 17000, 'compare_at_pesewas' => null, 'stock' => 30, 'is_active' => true],
                     ['sku' => 'BS-RD-WTF-100', 'label' => '100ml', 'price_pesewas' => 23000, 'compare_at_pesewas' => null, 'stock' => 20, 'is_active' => true],
+                    ['sku' => 'BS-RD-WTF-150', 'label' => '150ml', 'price_pesewas' => 30000, 'compare_at_pesewas' => null, 'stock' => 30, 'is_active' => true],
                 ],
             ],
 
@@ -114,7 +124,7 @@ class ProductSeeder extends Seeder
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
-                    ['sku' => 'BS-RS-SNM-100', 'label' => '100ml', 'price_pesewas' => 15000, 'compare_at_pesewas' => null, 'stock' => 50, 'is_active' => true],
+                    ['sku' => 'BS-RS-SNM-500', 'label' => '500ml', 'price_pesewas' => 32000, 'compare_at_pesewas' => null, 'stock' => 50, 'is_active' => true],
                 ],
             ],
             [
@@ -128,7 +138,7 @@ class ProductSeeder extends Seeder
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
-                    ['sku' => 'BS-RS-AMB-100', 'label' => '100ml', 'price_pesewas' => 17000, 'compare_at_pesewas' => null, 'stock' => 28, 'is_active' => true],
+                    ['sku' => 'BS-RS-AMB-500', 'label' => '500ml', 'price_pesewas' => 34000, 'compare_at_pesewas' => null, 'stock' => 28, 'is_active' => true],
                 ],
             ],
             [
@@ -142,8 +152,7 @@ class ProductSeeder extends Seeder
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
-                    ['sku' => 'BS-RS-CIT-50', 'label' => '50ml', 'price_pesewas' => 9000, 'compare_at_pesewas' => null, 'stock' => 44, 'is_active' => true],
-                    ['sku' => 'BS-RS-CIT-100', 'label' => '100ml', 'price_pesewas' => 15000, 'compare_at_pesewas' => null, 'stock' => 33, 'is_active' => true],
+                    ['sku' => 'BS-RS-CIT-500', 'label' => '500ml', 'price_pesewas' => 30000, 'compare_at_pesewas' => null, 'stock' => 33, 'is_active' => true],
                 ],
             ],
 
@@ -159,8 +168,7 @@ class ProductSeeder extends Seeder
                 'is_featured' => true,
                 'is_active' => true,
                 'variants' => [
-                    ['sku' => 'BS-FO-COT-50', 'label' => '50ml', 'price_pesewas' => 8000, 'compare_at_pesewas' => null, 'stock' => 60, 'is_active' => true],
-                    ['sku' => 'BS-FO-COT-100', 'label' => '100ml', 'price_pesewas' => 14000, 'compare_at_pesewas' => null, 'stock' => 40, 'is_active' => true],
+                    ['sku' => 'BS-FO-COT-30', 'label' => '30ml', 'price_pesewas' => 6000, 'compare_at_pesewas' => null, 'stock' => 60, 'is_active' => true],
                 ],
             ],
             [
@@ -174,8 +182,7 @@ class ProductSeeder extends Seeder
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
-                    ['sku' => 'BS-FO-SAN-50', 'label' => '50ml', 'price_pesewas' => 9000, 'compare_at_pesewas' => null, 'stock' => 38, 'is_active' => true],
-                    ['sku' => 'BS-FO-SAN-100', 'label' => '100ml', 'price_pesewas' => 16000, 'compare_at_pesewas' => null, 'stock' => 24, 'is_active' => true],
+                    ['sku' => 'BS-FO-SAN-30', 'label' => '30ml', 'price_pesewas' => 6500, 'compare_at_pesewas' => null, 'stock' => 38, 'is_active' => true],
                 ],
             ],
             [
@@ -189,8 +196,7 @@ class ProductSeeder extends Seeder
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
-                    ['sku' => 'BS-FO-ROS-50', 'label' => '50ml', 'price_pesewas' => 9500, 'compare_at_pesewas' => null, 'stock' => 35, 'is_active' => true],
-                    ['sku' => 'BS-FO-ROS-100', 'label' => '100ml', 'price_pesewas' => 16500, 'compare_at_pesewas' => null, 'stock' => 21, 'is_active' => true],
+                    ['sku' => 'BS-FO-ROS-30', 'label' => '30ml', 'price_pesewas' => 7000, 'compare_at_pesewas' => null, 'stock' => 35, 'is_active' => true],
                 ],
             ],
 

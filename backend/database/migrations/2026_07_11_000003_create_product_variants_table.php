@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::create('product_variants', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->string('label'); // '50ml' | '100ml' | 'Standard'
+            $table->string('label'); // '30ml' | '100ml' | '150ml' | '500ml' | 'Standard' — see StoreVariantRequest for the enforced set
             $table->string('sku')->unique();
             $table->bigInteger('price_pesewas');
             $table->bigInteger('compare_at_pesewas')->nullable();

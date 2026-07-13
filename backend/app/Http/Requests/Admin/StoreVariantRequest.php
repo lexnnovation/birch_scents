@@ -14,7 +14,7 @@ class StoreVariantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'label' => ['required', 'string', 'in:50ml,100ml,Standard'],
+            'label' => ['required', 'string', 'in:30ml,100ml,150ml,500ml,Standard'],
             'sku' => ['required', 'string', 'max:255', 'unique:product_variants,sku'],
             'pricePesewas' => ['required', 'integer', 'min:0'],
             'compareAtPesewas' => ['nullable', 'integer', 'min:0'],
