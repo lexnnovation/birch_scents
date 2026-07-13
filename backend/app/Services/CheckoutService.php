@@ -100,11 +100,14 @@ class CheckoutService
             // Initialized inside the transaction: if Paystack is unreachable
             // or rejects the request, the whole checkout rolls back rather
             // than leaving an orphaned pending order.
+            $callbackUrl = rtrim(config('checkout.frontend_url'), '/')
+                .'/checkout/callback?orderNumber='.urlencode($order->order_number);
+
             $init = $this->paystackService->initializeTransaction(
                 email: $user->email,
                 amountPesewas: $total,
                 reference: $reference,
-                callbackUrl: rtrim(config('checkout.frontend_url'), '/').'/checkout/callback',
+                callbackUrl: $callbackUrl,
             );
 
             return ['order' => $order->load('items', 'payment'), 'authorizationUrl' => $init['authorizationUrl']];

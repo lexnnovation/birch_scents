@@ -1,17 +1,12 @@
 import type { Category } from "@/types";
-import { categories } from "@/mocks/categories";
-import { withDelay } from "./mock-latency";
+import { apiFetch } from "./client";
 
-/**
- * Category reads. Phase 10 swaps the body for `apiFetch<...>("/categories")`
- * — the signature stays the same.
- */
+/** Category reads — the backend already returns them sorted by sortOrder. */
 
 export function getCategories(): Promise<Category[]> {
-  const sorted = [...categories].sort((a, b) => a.sortOrder - b.sortOrder);
-  return withDelay(sorted);
+  return apiFetch<{ data: Category[] }>("/categories").then((res) => res.data);
 }
 
 export function getCategoryBySlug(slug: string): Promise<Category | null> {
-  return withDelay(categories.find((c) => c.slug === slug) ?? null);
+  return getCategories().then((categories) => categories.find((c) => c.slug === slug) ?? null);
 }

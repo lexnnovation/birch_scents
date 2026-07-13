@@ -1,46 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 import { useCart, cartSubtotal } from "@/stores/cart";
-import { useOrders } from "@/stores/orders";
+import { useLastDelivery } from "@/stores/delivery";
 import { useUser } from "@/lib/supabase/use-user";
 import { useHydrated } from "@/lib/use-hydrated";
-import { buildOrder } from "@/lib/checkout";
+import { checkout, DELIVERY_FEE_PESEWAS } from "@/lib/api/checkout";
+import type { ApiError, CartItem } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatPesewas } from "@/lib/money";
-
-const DELIVERY_FEE = 3000; // GH₵ 30
-const FREE_OVER = 30000; // free delivery over GH₵ 300
 
 type Form = { name: string; phone: string; address: string; city: string; note: string };
 
 export default function CheckoutPage() {
   const hydrated = useHydrated();
   const items = useCart((s) => s.items);
-  const clear = useCart((s) => s.clear);
-  const addOrder = useOrders((s) => s.addOrder);
   const { user, loading: authLoading } = useUser();
   const isSignedIn = !!user;
   const router = useRouter();
-
-  const [form, setForm] = useState<Form>({
-    name: "",
-    phone: "",
-    address: "",
-    city: "",
-    note: "",
-  });
-  const [errors, setErrors] = useState<Partial<Record<keyof Form, string>>>({});
-  const [placing, setPlacing] = useState(false);
-
-  const list = hydrated ? items : [];
-  const subtotal = cartSubtotal(list);
-  const delivery = subtotal === 0 || subtotal >= FREE_OVER ? 0 : DELIVERY_FEE;
-  const total = subtotal + delivery;
 
   // Auth gate: signed-out shoppers are routed to sign in, then back to checkout.
   useEffect(() => {
@@ -57,7 +39,7 @@ export default function CheckoutPage() {
     );
   }
 
-  if (hydrated && list.length === 0 && !placing) {
+  if (items.length === 0) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
         <h1 className="text-2xl font-extrabold">Your cart is empty</h1>
@@ -70,6 +52,31 @@ export default function CheckoutPage() {
       </div>
     );
   }
+
+  // Only mounts once hydrated (so the persisted store has already rehydrated)
+  // and the cart is non-empty — its initial form state can safely read
+  // `lastUsed` synchronously with no separate prefill effect needed.
+  return <CheckoutForm items={items} />;
+}
+
+function CheckoutForm({ items }: { items: CartItem[] }) {
+  const lastDelivery = useLastDelivery((s) => s.lastUsed);
+  const saveDelivery = useLastDelivery((s) => s.save);
+
+  const [form, setForm] = useState<Form>(() => ({
+    name: lastDelivery?.name ?? "",
+    phone: lastDelivery?.phone ?? "",
+    address: lastDelivery?.address ?? "",
+    city: lastDelivery?.city ?? "",
+    note: "",
+  }));
+  const [errors, setErrors] = useState<Partial<Record<keyof Form, string>>>({});
+  const [placing, setPlacing] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const subtotal = cartSubtotal(items);
+  const delivery = subtotal === 0 ? 0 : DELIVERY_FEE_PESEWAS;
+  const total = subtotal + delivery;
 
   function set(key: keyof Form) {
     return (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -86,24 +93,33 @@ export default function CheckoutPage() {
     return Object.keys(e).length === 0;
   }
 
-  function placeOrder(ev: React.FormEvent) {
+  async function placeOrder(ev: React.FormEvent) {
     ev.preventDefault();
+    setSubmitError(null);
     if (!validate()) return;
+
     setPlacing(true);
-    const order = buildOrder(
-      list,
-      {
-        name: form.name,
-        phone: form.phone,
-        address: form.address,
-        city: form.city,
-        note: form.note || null,
-      },
-      delivery,
-    );
-    addOrder(order);
-    clear();
-    router.push(`/orders/confirmation/${order.orderNumber}`);
+    const deliveryDetails = {
+      name: form.name,
+      phone: form.phone,
+      address: form.address,
+      city: form.city,
+      note: form.note || null,
+    };
+
+    try {
+      const result = await checkout(items, deliveryDetails);
+      saveDelivery({ name: form.name, phone: form.phone, address: form.address, city: form.city });
+      // Full navigation to Paystack's hosted checkout — cart is only cleared
+      // once /checkout/callback confirms the order actually got paid.
+      window.location.href = result.authorizationUrl;
+    } catch (err) {
+      const apiError = err as ApiError;
+      const message = apiError.message || "Something went wrong placing your order. Please try again.";
+      setSubmitError(message);
+      toast.error(message);
+      setPlacing(false);
+    }
   }
 
   return (
@@ -155,7 +171,7 @@ export default function CheckoutPage() {
         <aside className="border-border bg-secondary/40 h-fit rounded-2xl border p-6">
           <h2 className="font-heading text-lg font-bold">Order summary</h2>
           <div className="mt-4 space-y-3">
-            {list.map((i) => (
+            {items.map((i) => (
               <div key={i.variantId} className="flex justify-between gap-3 text-sm">
                 <span className="text-muted-foreground">
                   {i.quantity} × {i.productName} <span className="text-xs">({i.variantLabel})</span>
@@ -168,17 +184,22 @@ export default function CheckoutPage() {
           </div>
           <div className="border-border mt-4 space-y-2 border-t pt-4 text-sm">
             <Row label="Subtotal" value={formatPesewas(subtotal)} />
-            <Row label="Delivery" value={delivery === 0 ? "Free" : formatPesewas(delivery)} />
+            <Row label="Delivery" value={formatPesewas(delivery)} />
             <div className="flex justify-between pt-2 text-base font-bold">
               <span>Total</span>
               <span className="tabular-nums">{formatPesewas(total)}</span>
             </div>
           </div>
-          <Button type="submit" size="pill" className="mt-6 w-full">
-            Place order
+          {submitError && (
+            <p className="text-destructive mt-4 text-sm" role="alert">
+              {submitError}
+            </p>
+          )}
+          <Button type="submit" size="pill" className="mt-6 w-full" disabled={placing}>
+            {placing ? "Redirecting to Paystack…" : "Place order"}
           </Button>
           <p className="text-muted-foreground mt-3 text-center text-xs">
-            Secure payment with Paystack (coming soon)
+            Secure payment with Paystack
           </p>
         </aside>
       </div>

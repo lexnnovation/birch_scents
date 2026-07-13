@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo, Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthTokenProvider } from "@/lib/api/auth-token-provider";
 import "./globals.css";
 
 // Display / headings — bold, slightly condensed grotesque (Bella Vita direction).
@@ -34,6 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${archivo.variable} ${inter.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
+        <AuthTokenProvider />
         {children}
         <Toaster />
       </body>

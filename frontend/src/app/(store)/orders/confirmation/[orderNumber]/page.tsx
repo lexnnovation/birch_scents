@@ -1,22 +1,53 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { Check } from "lucide-react";
-import { useOrders } from "@/stores/orders";
-import { useHydrated } from "@/lib/use-hydrated";
+import { useParams, useRouter } from "next/navigation";
+import { Check, Loader2 } from "lucide-react";
+import { getOrderByNumber } from "@/lib/api/orders";
+import { useUser } from "@/lib/supabase/use-user";
+import type { Order } from "@/types";
 import { OrderStatusBadge } from "@/components/order/OrderStatusBadge";
 import { Button } from "@/components/ui/button";
 import { formatPesewas } from "@/lib/money";
 
 export default function ConfirmationPage() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
-  const hydrated = useHydrated();
-  const order = useOrders((s) => s.orders.find((o) => o.orderNumber === orderNumber));
+  const { user, loading: authLoading } = useUser();
+  const isSignedIn = !!user;
+  const router = useRouter();
+  const [order, setOrder] = useState<Order | null | undefined>(undefined);
 
-  if (!hydrated) return null;
+  useEffect(() => {
+    if (!authLoading && !isSignedIn) {
+      router.replace(`/login?redirectTo=${encodeURIComponent(`/orders/confirmation/${orderNumber}`)}`);
+    }
+  }, [authLoading, isSignedIn, router, orderNumber]);
 
-  if (!order) {
+  useEffect(() => {
+    if (!isSignedIn) return;
+    let active = true;
+    getOrderByNumber(orderNumber)
+      .then((result) => {
+        if (active) setOrder(result);
+      })
+      .catch(() => {
+        if (active) setOrder(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [orderNumber, isSignedIn]);
+
+  if (authLoading || !isSignedIn || order === undefined) {
+    return (
+      <div className="mx-auto max-w-lg px-4 py-20 text-center">
+        <Loader2 className="text-muted-foreground mx-auto size-6 animate-spin" />
+      </div>
+    );
+  }
+
+  if (order === null) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
         <h1 className="text-2xl font-extrabold">Order not found</h1>

@@ -123,14 +123,17 @@ check off tasks as they land. Conventions live in `CLAUDE.md` — read it before
 
 ## Phase 10 — Connect Frontend to Backend
 
-- [ ] 10.1 Implement the real `lib/api/client.ts`: typed fetch wrapper on `NEXT_PUBLIC_API_URL`, attaches the Supabase access token, normalizes the error envelope into `ApiError`.
-- [ ] 10.2 Swap `products.ts`/`categories.ts` internals from mocks to the client (signatures unchanged); verify landing, shop, and PDP render identically from live data; delete unused mocks as they fall out of use.
-- [ ] 10.3 Wire checkout: submit cart + delivery form to `POST /checkout`, redirect to `authorizationUrl`; build `/checkout/callback` that polls order status and forwards to the confirmation page; handle failed/abandoned payment states gracefully.
-- [ ] 10.4 Wire order confirmation + order history to the live endpoints; clear the cart only after a confirmed order.
+- [x] 10.1 Implement the real `lib/api/client.ts`: typed fetch wrapper on `NEXT_PUBLIC_API_URL`, attaches the Supabase access token, normalizes the error envelope into `ApiError`. Token is sourced via a client-mounted `AuthTokenProvider` reading the real Supabase session; public catalog reads work unauthenticated from Server Components.
+- [x] 10.2 Swap `products.ts`/`categories.ts` internals from mocks to the client (signatures unchanged); verified landing, shop, and PDP render identically from live data (6 categories, 17 products — full parity with the mocks). Mock files not yet deleted — `admin.ts` still reads them until 10.5.
+- [x] 10.3 Wire checkout: submit cart + delivery form to `POST /checkout`, redirect to `authorizationUrl`; built `/checkout/callback` that polls order status and forwards to the confirmation page; handles the still-pending/timeout case gracefully. **Decision:** dropped the mock's "free delivery over GH₵300" rule — flat GH₵20 always, matching the real backend exactly (no client/server mismatch).
+- [x] 10.3b (added) Remember delivery details: last-used name/phone/address/city persist to `localStorage` (`stores/delivery.ts`) and pre-fill the checkout form next time — still fully editable, note stays blank per order.
+- [x] 10.4 Wire order confirmation + order history to the live endpoints (own-account-scoped); clear the cart only after `/checkout/callback` confirms the order is no longer `pending`. Both pages gained an auth gate they didn't need before (mock store required no login).
 - [ ] 10.5 Wire the admin screens (products CRUD, inventory adjust, order status) to the admin endpoints; verify 403 behavior for non-admin accounts; set your own user `is_admin = true` via SQL.
-- [ ] 10.6 Full happy-path E2E on test keys: register → shop → cart → checkout → Paystack test card → webhook → confirmation → order in history → order visible/updatable in admin.
+- [ ] 10.6 Full happy-path E2E on test keys: register → shop → cart → checkout → Paystack test card → webhook → confirmation → order in history → order visible/updatable in admin. **Blocked on the webhook tunnel** — see note below.
 - [ ] 10.7 Error-path pass: expired session mid-checkout, out-of-stock race (409), API down (friendly error states, no blank screens).
 - [ ] 10.8 Remove the `/dev/styleguide` page and any leftover mock imports. Commit: "Phase 10 — live API integration".
+
+**Webhook tunnel status (for 10.6):** `ngrok http https://birchscents.test:443` connects but forwards the *client's* Host header (the ngrok public hostname) to the backend instead of rewriting it to `birchscents.test` — Herd/Valet's nginx then can't resolve the site and 404s. `ngrok http --help` shows no `--host-header` rewrite flag in this v3 install (that was a v2 flag); v3 needs a Traffic Policy file to rewrite the header, or route around Valet's Host-based resolution entirely (e.g. tunnel to a temporary `php artisan serve` port instead of through nginx). Not yet resolved — pick this up before attempting 10.6.
 
 ## Phase 11 — Testing & Performance Optimization
 
