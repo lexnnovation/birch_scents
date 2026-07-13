@@ -17,7 +17,7 @@ const helpLinks = [
 export function Footer() {
   return (
     <footer className="site-footer bg-background text-foreground border-border mt-24 border-t">
-      <div className="mx-auto grid max-w-[1240px] gap-10 px-4 py-14 md:grid-cols-4 md:px-8">
+      <div className="mx-auto grid max-w-310 gap-10 px-4 py-14 md:grid-cols-4 md:px-8">
         <div className="md:col-span-2">
           <p className="font-heading text-2xl font-extrabold tracking-[0.04em] uppercase">
             Birchscents
@@ -56,7 +56,7 @@ export function Footer() {
       </div>
 
       <div className="border-border border-t">
-        <div className="text-muted-foreground mx-auto flex max-w-[1240px] flex-col gap-2 px-4 py-6 text-xs md:flex-row md:items-center md:justify-between md:px-8">
+        <div className="text-muted-foreground mx-auto flex max-w-310 flex-col gap-2 px-4 py-6 text-xs md:flex-row md:items-center md:justify-between md:px-8">
           <span>© {new Date().getFullYear()} Birchscents · Accra, Ghana</span>
           <span className="eyebrow">FDA Approved · Nationwide Delivery</span>
         </div>

@@ -5,7 +5,7 @@ import { placeholderGradient } from "@/lib/placeholder";
 export function SignatureScent() {
   return (
     <section className="bg-secondary/40">
-      <div className="mx-auto grid max-w-[1240px] items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-8">
+      <div className="mx-auto grid max-w-310 items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-8">
         <div
           className="order-first aspect-[4/3] rounded-2xl md:order-last md:aspect-square"
           style={{ background: placeholderGradient("snow-melon") }}

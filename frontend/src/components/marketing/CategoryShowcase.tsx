@@ -4,7 +4,7 @@ import { placeholderGradient } from "@/lib/placeholder";
 
 export function CategoryShowcase({ categories }: { categories: Category[] }) {
   return (
-    <section className="mx-auto max-w-[1240px] px-4 py-16 md:px-8">
+    <section className="mx-auto max-w-310 px-4 py-16 md:px-8">
       <div className="mb-8 text-center">
         <p className="eyebrow">Shop by category</p>
         <h2 className="mt-2 text-2xl font-extrabold md:text-3xl">Find your atmosphere</h2>

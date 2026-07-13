@@ -123,7 +123,7 @@ function CheckoutForm({ items }: { items: CartItem[] }) {
   }
 
   return (
-    <form onSubmit={placeOrder} className="mx-auto max-w-[1240px] px-4 py-12 md:px-8">
+    <form onSubmit={placeOrder} className="mx-auto max-w-310 px-4 py-12 md:px-8">
       <h1 className="text-3xl font-extrabold md:text-4xl">Checkout</h1>
 
       <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_380px]">

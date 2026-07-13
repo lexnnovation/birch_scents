@@ -22,7 +22,7 @@ export default async function ProductPage({ params }: Params) {
   const related = await getRelatedProducts(product.categorySlug, product.slug, 4);
 
   return (
-    <div className="mx-auto max-w-[1240px] px-4 py-10 md:px-8">
+    <div className="mx-auto max-w-310 px-4 py-10 md:px-8">
       <div className="grid gap-10 md:grid-cols-2">
         <ProductGallery product={product} />
 

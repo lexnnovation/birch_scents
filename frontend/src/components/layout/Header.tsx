@@ -17,7 +17,7 @@ export const primaryNav = [
 export function Header() {
   return (
     <header className="border-border bg-background/95 sticky top-0 z-40 border-b backdrop-blur">
-      <div className="mx-auto flex max-w-[1240px] items-center gap-4 px-4 py-3 md:px-8">
+      <div className="mx-auto flex max-w-310 items-center gap-4 px-4 py-3 md:px-8">
         {/* left: hamburger (mobile) / search (desktop) */}
         <div className="flex flex-1 items-center gap-2">
           <MobileNav links={primaryNav} />

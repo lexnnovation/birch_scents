@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 
 export function ForBusiness() {
   return (
-    <section id="for-business" className="mx-auto max-w-[1240px] scroll-mt-24 px-4 py-16 md:px-8">
+    <section id="for-business" className="mx-auto max-w-310 scroll-mt-24 px-4 py-16 md:px-8">
       <div className="bg-primary text-primary-foreground overflow-hidden rounded-2xl px-6 py-14 text-center md:px-16">
         <p className="eyebrow text-primary-foreground/70">For business</p>
         <h2 className="mx-auto mt-3 max-w-[20ch] text-2xl font-extrabold text-balance md:text-4xl">

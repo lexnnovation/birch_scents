@@ -12,7 +12,7 @@ export default function CartPage() {
   const list = useHydrated() ? items : [];
 
   return (
-    <div className="mx-auto max-w-[1240px] px-4 py-12 md:px-8">
+    <div className="mx-auto max-w-310 px-4 py-12 md:px-8">
       <h1 className="text-3xl font-extrabold md:text-4xl">Your cart</h1>
 
       {list.length === 0 ? (

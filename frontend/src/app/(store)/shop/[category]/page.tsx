@@ -24,7 +24,7 @@ export default async function CategoryPage({ params }: Params) {
   ]);
 
   return (
-    <div className="mx-auto max-w-[1240px] px-4 py-12 md:px-8">
+    <div className="mx-auto max-w-310 px-4 py-12 md:px-8">
       <header className="mb-8">
         <p className="eyebrow">Category</p>
         <h1 className="mt-2 text-3xl font-extrabold md:text-4xl">{cat.name}</h1>

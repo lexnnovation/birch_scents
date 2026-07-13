@@ -12,7 +12,7 @@ export function Hero() {
         }}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/5 to-black/30" />
-      <div className="relative mx-auto flex min-h-[560px] max-w-[1240px] flex-col items-center justify-center px-4 py-24 text-center text-white md:px-8">
+      <div className="relative mx-auto flex min-h-[560px] max-w-310 flex-col items-center justify-center px-4 py-24 text-center text-white md:px-8">
         <p className="eyebrow text-white/85">Signature · Snow Melon</p>
         <h1 className="mt-4 max-w-[16ch] text-4xl leading-[1.05] font-extrabold text-balance md:text-6xl">
           Inhale and Feel the Difference
