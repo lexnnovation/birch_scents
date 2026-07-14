@@ -96,9 +96,36 @@ class PaystackWebhookController extends Controller
             $order->update(['status' => OrderStatus::Paid]);
 
             foreach ($order->items as $item) {
-                if ($item->product_variant_id) {
-                    ProductVariant::whereKey($item->product_variant_id)->decrement('stock', $item->quantity);
+                if (! $item->product_variant_id) {
+                    continue;
                 }
+
+                $variant = ProductVariant::whereKey($item->product_variant_id)->lockForUpdate()->first();
+
+                if (! $variant) {
+                    continue;
+                }
+
+                // Checkout only checks stock, never reserves it (CLAUDE.md —
+                // an abandoned checkout shouldn't lock stock forever), so two
+                // orders for the last unit can both pass that check and both
+                // get paid. Clamping at 0 here (rather than an unconditional
+                // decrement) means an oversold item never throws the DB's
+                // stock >= 0 constraint mid-transaction — which would roll
+                // back the payment/order status update too, wrongly making a
+                // genuinely successful charge look unfulfilled in our system.
+                $newStock = max(0, $variant->stock - $item->quantity);
+
+                if ($newStock !== $variant->stock - $item->quantity) {
+                    Log::warning('Paystack webhook: stock oversold, clamped at 0', [
+                        'variantId' => $variant->id,
+                        'sku' => $variant->sku,
+                        'requestedQuantity' => $item->quantity,
+                        'availableStock' => $variant->stock,
+                    ]);
+                }
+
+                $variant->update(['stock' => $newStock]);
             }
         });
 

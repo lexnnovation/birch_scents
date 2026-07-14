@@ -136,6 +136,63 @@ it('does not fulfill when the verified amount does not match our record', functi
     expect($variant->fresh()->stock)->toBe(10);
 });
 
+it('clamps stock at 0 instead of going negative when two orders oversell the last units', function () {
+    // Checkout only checks stock, never reserves it, so two orders for the
+    // same low-stock variant can both pass that check and both get paid —
+    // the second webhook's decrement must not throw (which would roll back
+    // its own payment/order status update along with it) or leave stock
+    // negative.
+    $variant = ProductVariant::factory()->create(['stock' => 2]);
+
+    $orderA = Order::factory()->create(['status' => OrderStatus::Pending, 'total_pesewas' => 26500]);
+    $orderA->items()->create([
+        'product_variant_id' => $variant->id,
+        'product_name' => 'Test Product',
+        'variant_label' => $variant->label,
+        'unit_price_pesewas' => 26500,
+        'quantity' => 2,
+        'line_total_pesewas' => 26500 * 2,
+    ]);
+    $paymentA = Payment::factory()->for($orderA)->create([
+        'status' => PaymentStatus::Pending,
+        'reference' => 'bs_ref_oversell_a',
+        'amount_pesewas' => 26500,
+        'currency' => 'GHS',
+    ]);
+
+    $orderB = Order::factory()->create(['status' => OrderStatus::Pending, 'total_pesewas' => 26500]);
+    $orderB->items()->create([
+        'product_variant_id' => $variant->id,
+        'product_name' => 'Test Product',
+        'variant_label' => $variant->label,
+        'unit_price_pesewas' => 26500,
+        'quantity' => 1,
+        'line_total_pesewas' => 26500,
+    ]);
+    $paymentB = Payment::factory()->for($orderB)->create([
+        'status' => PaymentStatus::Pending,
+        'reference' => 'bs_ref_oversell_b',
+        'amount_pesewas' => 26500,
+        'currency' => 'GHS',
+    ]);
+
+    fakePaystackVerify(['reference' => 'bs_ref_oversell_a', 'amount' => 26500, 'currency' => 'GHS', 'status' => 'success']);
+    postPaystackWebhook(chargeSuccessPayload('bs_ref_oversell_a'))->assertOk();
+
+    expect($variant->fresh()->stock)->toBe(0);
+    expect($paymentA->fresh()->status)->toBe(PaymentStatus::Success);
+    expect($orderA->fresh()->status)->toBe(OrderStatus::Paid);
+
+    fakePaystackVerify(['reference' => 'bs_ref_oversell_b', 'amount' => 26500, 'currency' => 'GHS', 'status' => 'success']);
+    postPaystackWebhook(chargeSuccessPayload('bs_ref_oversell_b'))->assertOk();
+
+    // The second order still gets marked paid — a real charge happened and
+    // must be recorded as such — but stock clamps at 0 rather than -1.
+    expect($variant->fresh()->stock)->toBe(0);
+    expect($paymentB->fresh()->status)->toBe(PaymentStatus::Success);
+    expect($orderB->fresh()->status)->toBe(OrderStatus::Paid);
+});
+
 it('does not fulfill when Paystack verification itself fails', function () {
     $variant = ProductVariant::factory()->create(['stock' => 10]);
     $order = Order::factory()->create(['status' => OrderStatus::Pending, 'total_pesewas' => 26500]);
