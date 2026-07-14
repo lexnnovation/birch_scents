@@ -12,7 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * A local mirror of a Supabase-authenticated identity (CLAUDE.md §6).
  * Found-or-created from the JWT `sub` claim; no password is ever stored.
  */
-#[Fillable(['supabase_id', 'email', 'name', 'phone', 'is_admin'])]
+#[Fillable(['supabase_id', 'email', 'name', 'phone', 'address', 'city', 'is_admin'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */

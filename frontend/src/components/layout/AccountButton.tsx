@@ -70,6 +70,14 @@ export function AccountButton() {
         >
           <p className="text-muted-foreground truncate px-2.5 py-1.5 text-xs">{user.email}</p>
           <Link
+            href="/account/profile"
+            role="menuitem"
+            onClick={() => setOpen(false)}
+            className="hover:bg-muted block rounded-lg px-2.5 py-2 text-sm transition-colors"
+          >
+            Personal information
+          </Link>
+          <Link
             href="/orders"
             role="menuitem"
             onClick={() => setOpen(false)}

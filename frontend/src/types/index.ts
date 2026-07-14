@@ -86,6 +86,19 @@ export interface DeliveryDetails {
   note?: string | null;
 }
 
+/**
+ * The signed-in user's own saved profile (GET/PATCH /me) — the source
+ * checkout pre-fills from. Distinct from `DeliveryDetails`: this has `email`
+ * and no `note` (a delivery note is per-order, not part of the account).
+ */
+export interface UserProfile {
+  name: string | null;
+  email: string;
+  phone: string | null;
+  address: string | null;
+  city: string | null;
+}
+
 export interface Order {
   id: string;
   orderNumber: string;

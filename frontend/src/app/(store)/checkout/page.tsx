@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useCart, cartSubtotal } from "@/stores/cart";
-import { useLastDelivery } from "@/stores/delivery";
 import { useUser } from "@/lib/supabase/use-user";
 import { useHydrated } from "@/lib/use-hydrated";
 import { checkout, DELIVERY_FEE_PESEWAS } from "@/lib/api/checkout";
-import type { ApiError, CartItem } from "@/types";
+import { getProfile } from "@/lib/api/account";
+import type { ApiError, CartItem, UserProfile } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,6 +23,8 @@ export default function CheckoutPage() {
   const { user, loading: authLoading } = useUser();
   const isSignedIn = !!user;
   const router = useRouter();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
 
   // Auth gate: signed-out shoppers are routed to sign in, then back to checkout.
   useEffect(() => {
@@ -31,7 +33,17 @@ export default function CheckoutPage() {
     }
   }, [authLoading, isSignedIn, router]);
 
-  if (!hydrated || authLoading || !isSignedIn) {
+  // Pre-fills the form from the saved Personal Information profile. Fails
+  // soft on error — pre-fill is a convenience, not a requirement to check out.
+  useEffect(() => {
+    if (!isSignedIn) return;
+    getProfile()
+      .then(setProfile)
+      .catch(() => setProfile(null))
+      .finally(() => setProfileLoading(false));
+  }, [isSignedIn]);
+
+  if (!hydrated || authLoading || !isSignedIn || profileLoading) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
         <p className="text-muted-foreground text-sm">Loading checkout…</p>
@@ -54,22 +66,20 @@ export default function CheckoutPage() {
   }
 
   // Only mounts once hydrated (so the persisted store has already rehydrated)
-  // and the cart is non-empty — its initial form state can safely read
-  // `lastUsed` synchronously with no separate prefill effect needed.
-  return <CheckoutForm items={items} />;
+  // and the profile fetch has settled — its initial form state can safely
+  // read `profile` synchronously with no separate prefill effect needed.
+  return <CheckoutForm items={items} profile={profile} />;
 }
 
-function CheckoutForm({ items }: { items: CartItem[] }) {
+function CheckoutForm({ items, profile }: { items: CartItem[]; profile: UserProfile | null }) {
   const router = useRouter();
-  const lastDelivery = useLastDelivery((s) => s.lastUsed);
-  const saveDelivery = useLastDelivery((s) => s.save);
   const setPendingOrder = useCart((s) => s.setPendingOrder);
 
   const [form, setForm] = useState<Form>(() => ({
-    name: lastDelivery?.name ?? "",
-    phone: lastDelivery?.phone ?? "",
-    address: lastDelivery?.address ?? "",
-    city: lastDelivery?.city ?? "",
+    name: profile?.name ?? "",
+    phone: profile?.phone ?? "",
+    address: profile?.address ?? "",
+    city: profile?.city ?? "",
     note: "",
   }));
   const [errors, setErrors] = useState<Partial<Record<keyof Form, string>>>({});
@@ -111,7 +121,9 @@ function CheckoutForm({ items }: { items: CartItem[] }) {
 
     try {
       const result = await checkout(items, deliveryDetails);
-      saveDelivery({ name: form.name, phone: form.phone, address: form.address, city: form.city });
+      // Deliberately not saved back to the Personal Information profile — a
+      // one-off destination typed here shouldn't silently become the new
+      // default. Only the /account/profile page can change that.
       // Stashing the order number (survives reloads) lets any later
       // storefront page catch up and clear the cart even if the webhook
       // confirms after /checkout/callback has stopped polling.

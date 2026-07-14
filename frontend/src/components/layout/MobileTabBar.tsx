@@ -5,7 +5,7 @@ const tabs = [
   { label: "Home", href: "/", icon: Home },
   { label: "Shop", href: "/shop", icon: LayoutGrid },
   { label: "Signature", href: "/products/snow-melon", icon: Sparkles },
-  { label: "Account", href: "/orders", icon: User },
+  { label: "Account", href: "/account", icon: User },
   { label: "Cart", href: "/cart", icon: ShoppingBag },
 ];
 

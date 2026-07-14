@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\CheckoutController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\PaystackWebhookController;
+use App\Http\Controllers\Api\V1\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,6 +38,8 @@ Route::middleware('auth.supabase')->group(function () {
     Route::get('orders', [OrderController::class, 'index']);
     Route::get('orders/{orderNumber}', [OrderController::class, 'show']);
     Route::post('checkout', [CheckoutController::class, 'store']);
+    Route::get('me', [ProfileController::class, 'show']);
+    Route::patch('me', [ProfileController::class, 'update']);
 });
 
 // Admin routes — full catalog visibility + writes. Prefix is deliberately
