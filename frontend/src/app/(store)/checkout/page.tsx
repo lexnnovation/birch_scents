@@ -74,7 +74,7 @@ function CheckoutForm({ items }: { items: CartItem[] }) {
   }));
   const [errors, setErrors] = useState<Partial<Record<keyof Form, string>>>({});
   const [placing, setPlacing] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<{ message: string; status?: number } | null>(null);
 
   const subtotal = cartSubtotal(items);
   const delivery = subtotal === 0 ? 0 : DELIVERY_FEE_PESEWAS;
@@ -143,8 +143,19 @@ function CheckoutForm({ items }: { items: CartItem[] }) {
       });
     } catch (err) {
       const apiError = err as ApiError;
-      const message = apiError.message || "Something went wrong placing your order. Please try again.";
-      setSubmitError(message);
+
+      // Session died between loading checkout and submitting it — send them
+      // to sign in and back. The cart is untouched (localStorage), so it's
+      // still there once they're back on this page.
+      if (apiError.status === 401) {
+        toast.error("Your session expired — please sign in again to finish checking out.");
+        router.push(`/login?redirectTo=${encodeURIComponent("/checkout")}`);
+        return;
+      }
+
+      const message =
+        apiError.message || "Something went wrong placing your order. Please try again.";
+      setSubmitError({ message, status: apiError.status });
       toast.error(message);
       setPlacing(false);
     }
@@ -219,9 +230,19 @@ function CheckoutForm({ items }: { items: CartItem[] }) {
             </div>
           </div>
           {submitError && (
-            <p className="text-destructive mt-4 text-sm" role="alert">
-              {submitError}
-            </p>
+            <div className="mt-4">
+              <p className="text-destructive text-sm" role="alert">
+                {submitError.message}
+              </p>
+              {submitError.status === 409 && (
+                <Link
+                  href="/cart"
+                  className="text-foreground mt-1 inline-block text-sm underline underline-offset-4"
+                >
+                  Review your cart
+                </Link>
+              )}
+            </div>
           )}
           <Button type="submit" size="pill" className="mt-6 w-full" disabled={placing}>
             {placing ? "Opening payment…" : "Place order"}

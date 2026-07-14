@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -16,6 +16,7 @@ export default function OrdersPage() {
   const isSignedIn = !!user;
   const router = useRouter();
   const [orders, setOrders] = useState<Order[] | undefined>(undefined);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !isSignedIn) {
@@ -23,20 +24,19 @@ export default function OrdersPage() {
     }
   }, [authLoading, isSignedIn, router]);
 
-  useEffect(() => {
-    if (!isSignedIn) return;
-    let active = true;
+  const load = useCallback(() => {
     getOrders()
       .then((res) => {
-        if (active) setOrders(res.data);
+        setLoadError(false);
+        setOrders(res.data);
       })
-      .catch(() => {
-        if (active) setOrders([]);
-      });
-    return () => {
-      active = false;
-    };
-  }, [isSignedIn]);
+      .catch(() => setLoadError(true));
+  }, []);
+
+  useEffect(() => {
+    if (!isSignedIn) return;
+    load();
+  }, [isSignedIn, load]);
 
   if (authLoading || !isSignedIn) {
     return (
@@ -50,7 +50,16 @@ export default function OrdersPage() {
     <div className="mx-auto max-w-3xl px-4 py-12 md:px-8">
       <h1 className="text-3xl font-extrabold md:text-4xl">My orders</h1>
 
-      {orders === undefined ? (
+      {loadError ? (
+        <div className="py-20 text-center">
+          <p className="text-muted-foreground">We couldn&rsquo;t load your orders.</p>
+          <div className="mt-6">
+            <Button variant="outline" size="pill" onClick={load}>
+              Try again
+            </Button>
+          </div>
+        </div>
+      ) : orders === undefined ? (
         <div className="py-20 text-center">
           <Loader2 className="text-muted-foreground mx-auto size-6 animate-spin" />
         </div>

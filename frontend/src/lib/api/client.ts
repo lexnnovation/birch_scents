@@ -44,16 +44,29 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
   const { method = "GET", body, params, signal } = options;
   const token = await getAccessToken();
 
-  const response = await fetch(buildUrl(path, params), {
-    method,
-    signal,
-    headers: {
-      Accept: "application/json",
-      ...(body ? { "Content-Type": "application/json" } : {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  let response: Response;
+  try {
+    response = await fetch(buildUrl(path, params), {
+      method,
+      signal,
+      headers: {
+        Accept: "application/json",
+        ...(body ? { "Content-Type": "application/json" } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    // The request never reached a response at all (offline, DNS failure,
+    // connection refused) — normalize into the same ApiError shape every
+    // caller already expects, instead of leaking a raw browser message
+    // like "Failed to fetch". status 0 marks "never got a response".
+    const error: ApiError = {
+      message: "We couldn't reach Birchscents. Check your connection and try again.",
+      status: 0,
+    };
+    throw error;
+  }
 
   if (!response.ok) {
     let payload: Partial<ApiError> = {};
