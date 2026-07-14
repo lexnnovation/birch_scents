@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
 import { toast } from "sonner";
 import type { Product, VariantLabel } from "@/types";
 import { formatPesewas } from "@/lib/money";
 import { placeholderGradient } from "@/lib/placeholder";
 import { useCart } from "@/stores/cart";
 import { cn } from "@/lib/utils";
+import { hoverLift } from "@/lib/motion";
 import { Button } from "@/components/ui/button";
 import { ProductGrid } from "./ProductGrid";
 
@@ -101,6 +103,7 @@ function SizedProductCard({ product, size }: { product: Product; size: VariantLa
   const addItem = useCart((s) => s.add);
   const variant = product.variants.find((v) => v.label === size);
   const available = !!variant && variant.isActive && variant.stock > 0;
+  const reducedMotion = useReducedMotion();
 
   function add() {
     if (!variant) return;
@@ -120,7 +123,13 @@ function SizedProductCard({ product, size }: { product: Product; size: VariantLa
   }
 
   return (
-    <div className="group">
+    <motion.div
+      className="group"
+      initial="rest"
+      whileHover="hover"
+      variants={hoverLift}
+      transition={reducedMotion ? { duration: 0 } : { duration: 0.25, ease: "easeOut" }}
+    >
       <Link href={`/products/${product.slug}`} className="block">
         <div className="bg-secondary relative mb-3 aspect-square overflow-hidden rounded-xl">
           <div
@@ -183,6 +192,6 @@ function SizedProductCard({ product, size }: { product: Product; size: VariantLa
           <Link href={`/products/${product.slug}`}>More detail</Link>
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 }

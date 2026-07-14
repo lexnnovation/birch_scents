@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
 import { toast } from "sonner";
 import type { Product, ProductVariant } from "@/types";
 import { formatPesewas, discountPercent } from "@/lib/money";
 import { placeholderGradient } from "@/lib/placeholder";
 import { useCart } from "@/stores/cart";
 import { cn } from "@/lib/utils";
+import { hoverLift } from "@/lib/motion";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
@@ -20,9 +22,16 @@ export function ProductCard({ product }: { product: Product }) {
   const pct = discountPercent(cheapest.pricePesewas, cheapest.compareAtPesewas);
   const multi = product.variants.length > 1;
   const inStock = product.variants.some((v) => v.isActive && v.stock > 0);
+  const reducedMotion = useReducedMotion();
 
   return (
-    <div className="group">
+    <motion.div
+      className="group"
+      initial="rest"
+      whileHover="hover"
+      variants={hoverLift}
+      transition={reducedMotion ? { duration: 0 } : { duration: 0.25, ease: "easeOut" }}
+    >
       <Link href={`/products/${product.slug}`} className="block">
         <div className="bg-secondary relative mb-3 aspect-square overflow-hidden rounded-xl">
           <div
@@ -94,7 +103,7 @@ export function ProductCard({ product }: { product: Product }) {
           <QuickAdd product={product} />
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
 

@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
+import { Reveal } from "@/components/motion/Reveal";
 
 export function ForBusiness() {
   return (
     <section id="for-wholesalers" className="mx-auto max-w-310 scroll-mt-24 px-4 py-16 md:px-8">
-      <div className="bg-primary text-primary-foreground overflow-hidden rounded-2xl px-6 py-14 text-center md:px-16">
+      <Reveal className="bg-primary text-primary-foreground overflow-hidden rounded-2xl px-6 py-14 text-center md:px-16">
         <p className="eyebrow text-primary-foreground/70">For wholesalers</p>
         <h2 className="mx-auto mt-3 max-w-[20ch] text-2xl font-extrabold text-balance md:text-4xl">
           Premium scenting for hotels, spas, offices &amp; events
@@ -17,7 +18,7 @@ export function ForBusiness() {
             <a href="mailto:hello@birchscents.com?subject=Business%20enquiry">Talk to our team</a>
           </Button>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { placeholderGradient } from "@/lib/placeholder";
+import { Reveal } from "@/components/motion/Reveal";
 
 export function SignatureScent() {
   return (
     <section className="bg-secondary/40">
-      <div className="mx-auto grid max-w-310 items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-8">
+      <Reveal className="mx-auto grid max-w-310 items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-8">
         <div
           className="order-first aspect-[4/3] rounded-2xl md:order-last md:aspect-square"
           style={{ background: placeholderGradient("snow-melon") }}
@@ -27,7 +28,7 @@ export function SignatureScent() {
             </Button>
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
