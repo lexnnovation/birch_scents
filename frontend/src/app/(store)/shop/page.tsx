@@ -23,6 +23,7 @@ export default async function ShopPage() {
       </header>
       <CategoryFilter categories={categories} active={null} />
       <div className="mt-10">
+        <h2 className="sr-only">Products</h2>
         <ProductGrid products={page.data} />
       </div>
     </div>

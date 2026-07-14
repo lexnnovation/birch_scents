@@ -5,17 +5,22 @@ import { AuthTokenProvider } from "@/lib/api/auth-token-provider";
 import "./globals.css";
 
 // Display / headings — bold, slightly condensed grotesque (Bella Vita direction).
+// Weights pinned to what's actually used (font-semibold/bold/extrabold on
+// headings only) instead of the full variable range — cut ~3 font files
+// down to 2 smaller static ones, which was the dominant LCP cost on mobile.
 const archivo = Archivo({
   variable: "--font-archivo",
   subsets: ["latin"],
   display: "swap",
+  weight: ["600", "700", "800"],
 });
 
-// Body / UI — clean neutral sans.
+// Body / UI — clean neutral sans. Needs the lighter end too (plain body text).
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {

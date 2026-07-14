@@ -32,6 +32,7 @@ export default async function CategoryPage({ params }: Params) {
       </header>
       <CategoryFilter categories={categories} active={category} />
       <div className="mt-10">
+        <h2 className="sr-only">Products</h2>
         <CategorySizeToggle products={page.data} />
       </div>
     </div>
