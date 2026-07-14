@@ -61,15 +61,15 @@ export function BuyPanel({ product }: { product: Product }) {
       {product.variants.length > 1 && (
         <div className="mt-6">
           <p className="eyebrow mb-2">Size</p>
-          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Size">
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Size">
             {product.variants.map((v) => {
               const disabled = !v.isActive || v.stock <= 0;
               const selected = v.id === variant.id;
               return (
                 <button
                   key={v.id}
-                  role="radio"
-                  aria-checked={selected}
+                  type="button"
+                  aria-pressed={selected}
                   disabled={disabled}
                   onClick={() => setVariant(v)}
                   className={cn(

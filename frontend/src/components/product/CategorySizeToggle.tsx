@@ -33,7 +33,7 @@ export function CategorySizeToggle({ products }: { products: Product[] }) {
 
   return (
     <div>
-      <div className="mb-6 flex flex-wrap gap-2" role="radiogroup" aria-label="Browse by size">
+      <div className="mb-6 flex flex-wrap gap-2" role="group" aria-label="Browse by size">
         <SizeTab label="All" active={selected === "all"} onClick={() => setSelected("all")} />
         {sizes.map((size) => (
           <SizeTab
@@ -66,8 +66,7 @@ function SizeTab({
   return (
     <button
       type="button"
-      role="radio"
-      aria-checked={active}
+      aria-pressed={active}
       onClick={onClick}
       className={cn(
         "rounded-full border px-5 py-2.5 text-sm font-medium transition-colors",

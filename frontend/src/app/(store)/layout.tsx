@@ -10,7 +10,9 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
     <>
       <AnnouncementBar />
       <Header />
-      <main className="flex-1">{children}</main>
+      <main id="main-content" className="flex-1">
+        {children}
+      </main>
       <Footer />
       {/* clears the floating mobile tab bar */}
       <div className="h-20 md:hidden" />

@@ -174,7 +174,7 @@ function QuickAdd({ product }: { product: Product }) {
         </PopoverTrigger>
         <PopoverContent align="start" className="w-auto p-4">
           <p className="eyebrow mb-2 px-1">Size</p>
-          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Size">
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Size">
             {product.variants.map((v) => {
               const disabled = !v.isActive || v.stock <= 0;
               const selected = v.id === variant.id;
@@ -182,8 +182,7 @@ function QuickAdd({ product }: { product: Product }) {
                 <button
                   key={v.id}
                   type="button"
-                  role="radio"
-                  aria-checked={selected}
+                  aria-pressed={selected}
                   disabled={disabled}
                   onClick={() => setVariant(v)}
                   className={cn(

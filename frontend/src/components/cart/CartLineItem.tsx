@@ -38,12 +38,17 @@ export function CartLineItem({ item, onNavigate }: { item: CartItem; onNavigate?
           </button>
         </div>
         <p className="text-muted-foreground text-xs">{item.variantLabel}</p>
-        <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+        <div
+          className="mt-2 flex flex-wrap items-center justify-between gap-2"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           <span className="shrink-0 text-sm font-semibold tabular-nums">
             {formatPesewas(item.unitPricePesewas * item.quantity)}
           </span>
           <div className="border-border flex shrink-0 items-center rounded-full border text-sm">
             <button
+              type="button"
               aria-label="Decrease quantity"
               onClick={() => updateQty(item.variantId, item.quantity - 1)}
               className="px-2.5 py-1.5"
@@ -52,6 +57,7 @@ export function CartLineItem({ item, onNavigate }: { item: CartItem; onNavigate?
             </button>
             <span className="w-7 text-center tabular-nums">{item.quantity}</span>
             <button
+              type="button"
               aria-label="Increase quantity"
               onClick={() => updateQty(item.variantId, item.quantity + 1)}
               className="px-2.5 py-1.5"
