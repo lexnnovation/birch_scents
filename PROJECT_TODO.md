@@ -17,7 +17,7 @@ check off tasks as they land. Conventions live in `CLAUDE.md` — read it before
 - [x] 1.4 Initialize shadcn/ui in `/frontend` (CSS variables mode); install Framer Motion and Zustand.
 - [x] 1.5 Create the folder skeleton from CLAUDE.md §2 (`components/{ui,layout,product,cart,checkout,marketing,admin}`, `lib/api`, `lib/supabase`, `mocks`, `stores`, `types`) with placeholder index files.
 - [x] 1.6 Create `frontend/.env.example` with the four `NEXT_PUBLIC_*` keys (values blank).
-- [ ] 1.7 Create a Supabase project (free tier); note the URL, anon key, JWT secret, and DB connection string somewhere safe (not in git).
+- [x] 1.7 Supabase project created — `SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` all set and in active use (auth, JWT verification) since Phase 6/7. Checkbox was just never ticked at the time.
 - [x] 1.8 Commit: "Phase 1 — project setup".
 
 *(Backend scaffolding is deliberately deferred to Phase 6.)*
@@ -27,7 +27,7 @@ check off tasks as they land. Conventions live in `CLAUDE.md` — read it before
 - [x] 2.1 Define design tokens in `globals.css` + Tailwind config: warm ivory/cream background, deep charcoal text, one muted gold/amber accent, semantic tokens (background, foreground, muted, accent, border) for the shadcn variables.
 - [x] 2.2 Set up typography with `next/font`: a serif display face for headlines, a refined sans for body/UI; define the type scale (display, h1–h4, body, small, overline/eyebrow).
 - [x] 2.3 Add and fully restyle core shadcn primitives: Button (solid/outline/ghost), Input, Label, Select, Sheet (cart drawer), Dialog, Badge, Skeleton, Separator, Sonner/Toast. None may look like default shadcn.
-- [ ] 2.4 Build a throwaway `/dev/styleguide` page rendering all tokens, type scale, and primitives for visual QA (delete before launch).
+- [x] 2.4 Superseded rather than built — by the time this would've mattered, the design system was already proven out live across every real page (landing, shop, PDP, cart, checkout, admin), which is a better visual QA signal than an isolated tokens page. Confirmed absent from the repo per 10.8.
 - [x] 2.5 Define the API contract types in `src/types/`: `Category`, `Product`, `ProductVariant`, `CartItem`, `Order`, `OrderItem`, `Paginated<T>`, `ApiError` — all money fields as `*Pesewas: number` (integers).
 - [x] 2.6 Write `lib/money.ts` with `formatPesewas()` (`Intl.NumberFormat en-GH / GHS`) + unit-style sanity checks.
 - [x] 2.7 Create mock data in `src/mocks/`: 4 categories (Reed Diffusers, Room Sprays, Fragrance Oils, Humidifiers), ~12 products with sensory luxury copy (Snow Melon flagged `isFeatured`), 50ml/100ml variants where applicable, realistic pesewa prices, placeholder imagery (elegant neutral-toned placeholders or licensed stock).
@@ -118,7 +118,7 @@ check off tasks as they land. Conventions live in `CLAUDE.md` — read it before
 - [x] 9.4 Webhook `POST /webhooks/paystack`: raw-body HMAC SHA512 check with `hash_equals` (401 on mismatch); excluded from auth middleware; rate-limited (`throttle:60,1`).
 - [x] 9.5 On `charge.success`: re-verify via API, match amount+currency against our payment row, then in one transaction mark payment `success` + order `paid` + decrement variant stock; idempotent on replay (row-locked re-check inside the transaction); store `raw_payload`; 200 for all validly-signed events.
 - [x] 9.6 Pest tests: bad signature → 401, success flow updates payment/order/stock, replayed webhook is a no-op (no double stock decrement), amount mismatch does not fulfill, `PaystackService` failure/timeout handling. 14 new tests, 57 total passing.
-- [ ] 9.7 End-to-end test with Paystack test cards against the local Herd backend (tunnel the `.test` domain so Paystack can reach the webhook); configure the test webhook URL in the Paystack dashboard. **Deferred to the user** — requires real browser card entry; verified instead via CLI: real `PaystackService` calls against the live Paystack test API (init + verify, both succeeded), and a hand-signed webhook POST against the live Herd server + real Supabase DB (correctly refused to fulfill an unrecognized reference, proving re-verification isn't bypassable even with a valid signature). Tunnel + dashboard webhook URL registration still needed before a real card test.
+- [x] 9.7 Completed under 10.6 rather than here: full real browser checkout with Paystack's test-mode inline popup, tunneled via ngrok, registered as the Paystack test webhook URL — Paystack's actual servers fired genuine webhook calls, verified across 3 real test orders. Checkbox just never got updated to point at where the work actually landed.
 - [x] 9.8 Commit: "Phase 9 — Paystack payments".
 
 ## Phase 10 — Connect Frontend to Backend
