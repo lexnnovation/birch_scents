@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Docker runtime image copies only .next/standalone (CLAUDE.md §13).
+  output: "standalone",
   // Next.js dev server blocks cross-origin requests to dev assets by default.
   // Testing on a phone over LAN needs the dev machine's LAN IP allow-listed,
   // otherwise the client JS bundle fails to load and hydration never runs —

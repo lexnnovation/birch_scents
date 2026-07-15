@@ -9,6 +9,10 @@ export const metadata: Metadata = {
     "Browse Birchscents reed diffusers, room sprays, fragrance oils, and humidifiers — long-lasting luxury scent for every space.",
 };
 
+// Product/category data changes live (admin edits, stock changes) — never
+// let Next bake a build-time snapshot into static HTML.
+export const dynamic = "force-dynamic";
+
 export default async function ShopPage() {
   const [categories, page] = await Promise.all([getCategories(), getProducts({ perPage: 100 })]);
 

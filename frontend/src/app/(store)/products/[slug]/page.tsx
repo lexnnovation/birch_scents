@@ -7,6 +7,10 @@ import { ProductGrid } from "@/components/product/ProductGrid";
 
 type Params = { params: Promise<{ slug: string }> };
 
+// Product data changes live (admin edits, stock changes) — never let Next
+// bake a build-time snapshot into static HTML.
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProductBySlug(slug);

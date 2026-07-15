@@ -2,6 +2,11 @@ import type { MetadataRoute } from "next";
 import { getCategories, getProducts } from "@/lib/api";
 import { SITE_URL } from "@/lib/site";
 
+// Same reasoning as the catalog pages (see their `dynamic` exports): product
+// and category data changes live, and the Docker build has no route to the
+// API at build time — this must run fresh at request time, not once at build.
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [categories, products] = await Promise.all([
     getCategories(),
