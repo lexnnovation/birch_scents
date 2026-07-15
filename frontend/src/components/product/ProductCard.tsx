@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { toast } from "sonner";
 import type { Product, ProductVariant } from "@/types";
 import { formatPesewas, discountPercent } from "@/lib/money";
-import { placeholderGradient } from "@/lib/placeholder";
+import { getCategoryImage } from "@/lib/placeholder";
 import { useCart } from "@/stores/cart";
 import { cn } from "@/lib/utils";
 import { hoverLift } from "@/lib/motion";
@@ -34,12 +35,15 @@ export function ProductCard({ product }: { product: Product }) {
     >
       <Link href={`/products/${product.slug}`} className="block">
         <div className="bg-secondary relative mb-3 aspect-square overflow-hidden rounded-xl">
-          <div
+          <Image
+            src={product.imageUrl ?? getCategoryImage(product.categorySlug)}
+            alt={product.name}
+            fill
+            sizes="(min-width: 1024px) 23vw, (min-width: 768px) 31vw, 47vw"
             className={cn(
-              "absolute inset-0 transition-transform duration-500",
+              "object-cover transition-transform duration-500",
               inStock && "group-hover:scale-[1.04]",
             )}
-            style={{ background: placeholderGradient(product.slug) }}
           />
           {!inStock ? (
             <span className="bg-foreground text-background absolute top-2.5 left-2.5 rounded-md px-2.5 py-1.5 text-xs font-bold tracking-[0.08em] uppercase">
@@ -122,6 +126,7 @@ function QuickAdd({ product }: { product: Product }) {
         productId: product.id,
         productSlug: product.slug,
         productName: product.name,
+        categorySlug: product.categorySlug,
         variantLabel: v.label,
         imageUrl: product.imageUrl,
         unitPricePesewas: v.pricePesewas,

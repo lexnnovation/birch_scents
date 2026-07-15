@@ -31,6 +31,7 @@ export function BuyPanel({ product }: { product: Product }) {
         productId: product.id,
         productSlug: product.slug,
         productName: product.name,
+        categorySlug: product.categorySlug,
         variantLabel: variant.label,
         imageUrl: product.imageUrl,
         unitPricePesewas: variant.pricePesewas,

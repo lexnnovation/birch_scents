@@ -58,6 +58,7 @@ export interface CartItem {
   productId: string;
   productSlug: string;
   productName: string;
+  categorySlug: string;
   variantLabel: string;
   imageUrl: string | null;
   unitPricePesewas: number;

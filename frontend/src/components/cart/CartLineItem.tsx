@@ -1,11 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { X, Minus, Plus } from "lucide-react";
 import type { CartItem } from "@/types";
 import { useCart } from "@/stores/cart";
 import { formatPesewas } from "@/lib/money";
-import { placeholderGradient } from "@/lib/placeholder";
+import { getCategoryImage } from "@/lib/placeholder";
 
 export function CartLineItem({ item, onNavigate }: { item: CartItem; onNavigate?: () => void }) {
   const updateQty = useCart((s) => s.updateQty);
@@ -17,9 +18,16 @@ export function CartLineItem({ item, onNavigate }: { item: CartItem; onNavigate?
         href={`/products/${item.productSlug}`}
         onClick={onNavigate}
         aria-label={item.productName}
-        className="size-20 shrink-0 rounded-lg"
-        style={{ background: placeholderGradient(item.productSlug) }}
-      />
+        className="relative size-20 shrink-0 overflow-hidden rounded-lg"
+      >
+        <Image
+          src={item.imageUrl ?? getCategoryImage(item.categorySlug)}
+          alt=""
+          fill
+          sizes="80px"
+          className="object-cover"
+        />
+      </Link>
       <div className="min-w-0 flex-1">
         <div className="flex justify-between gap-2">
           <Link

@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { toast } from "sonner";
 import type { Product, VariantLabel } from "@/types";
 import { formatPesewas } from "@/lib/money";
-import { placeholderGradient } from "@/lib/placeholder";
+import { getCategoryImage } from "@/lib/placeholder";
 import { useCart } from "@/stores/cart";
 import { cn } from "@/lib/utils";
 import { hoverLift } from "@/lib/motion";
@@ -112,6 +113,7 @@ function SizedProductCard({ product, size }: { product: Product; size: VariantLa
         productId: product.id,
         productSlug: product.slug,
         productName: product.name,
+        categorySlug: product.categorySlug,
         variantLabel: variant.label,
         imageUrl: product.imageUrl,
         unitPricePesewas: variant.pricePesewas,
@@ -131,12 +133,15 @@ function SizedProductCard({ product, size }: { product: Product; size: VariantLa
     >
       <Link href={`/products/${product.slug}`} className="block">
         <div className="bg-secondary relative mb-3 aspect-square overflow-hidden rounded-xl">
-          <div
+          <Image
+            src={product.imageUrl ?? getCategoryImage(product.categorySlug)}
+            alt={product.name}
+            fill
+            sizes="(min-width: 1024px) 23vw, (min-width: 768px) 31vw, 47vw"
             className={cn(
-              "absolute inset-0 transition-transform duration-500",
+              "object-cover transition-transform duration-500",
               available && "group-hover:scale-[1.04]",
             )}
-            style={{ background: placeholderGradient(product.slug) }}
           />
           {product.isFeatured && available && (
             <span className="bg-primary text-primary-foreground absolute top-2.5 left-2.5 rounded-md px-2 py-1 text-[9px] font-semibold tracking-[0.12em] uppercase">
