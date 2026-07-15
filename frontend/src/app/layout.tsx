@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Archivo, Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthTokenProvider } from "@/lib/api/auth-token-provider";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 // Display / headings — bold, slightly condensed grotesque (Bella Vita direction).
@@ -23,13 +24,29 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
 });
 
+const title = {
+  default: "Birchscents — Inhale and Feel the Difference",
+  template: "%s · Birchscents",
+};
+const description =
+  "Ghana's premier luxury home fragrance brand. FDA-approved reed diffusers, room sprays, fragrance oils, and humidifiers — long-lasting, crafted in Accra.";
+
 export const metadata: Metadata = {
-  title: {
-    default: "Birchscents — Inhale and Feel the Difference",
-    template: "%s · Birchscents",
+  metadataBase: new URL(SITE_URL),
+  title,
+  description,
+  openGraph: {
+    title: title.default,
+    description,
+    siteName: "Birchscents",
+    locale: "en_GH",
+    type: "website",
   },
-  description:
-    "Ghana's premier luxury home fragrance brand. FDA-approved reed diffusers, room sprays, fragrance oils, and humidifiers — long-lasting, crafted in Accra.",
+  twitter: {
+    card: "summary_large_image",
+    title: title.default,
+    description,
+  },
 };
 
 export default function RootLayout({
