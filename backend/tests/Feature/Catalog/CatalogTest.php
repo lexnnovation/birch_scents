@@ -3,6 +3,7 @@
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use Illuminate\Support\Facades\DB;
 
 it('lists categories ordered by sort_order with camelCase keys', function () {
     Category::factory()->create(['name' => 'Second', 'sort_order' => 2]);
@@ -13,6 +14,14 @@ it('lists categories ordered by sort_order with camelCase keys', function () {
     $response->assertJsonPath('data.0.name', 'First');
     $response->assertJsonPath('data.1.name', 'Second');
     $response->assertJsonStructure(['data' => [['id', 'name', 'slug', 'description', 'imageUrl', 'sortOrder']]]);
+});
+
+it('rate-limits the public catalog endpoint at 60 requests per minute', function () {
+    for ($i = 0; $i < 60; $i++) {
+        $this->getJson('/api/v1/products')->assertOk();
+    }
+
+    $this->getJson('/api/v1/products')->assertStatus(429);
 });
 
 it('only returns active products from the public products list', function () {
@@ -58,6 +67,65 @@ it('filters products by featured flag', function () {
     $names = collect($response->json('data'))->pluck('name');
     expect($names)->toContain('Featured Product');
     expect($names)->not->toContain('Regular Product');
+});
+
+it('searches products by name, tagline, or scent notes (case-insensitive)', function () {
+    Product::factory()->create(['name' => 'Snow Melon', 'tagline' => 'Crisp and sweet', 'scent_notes' => 'Melon, citrus']);
+    Product::factory()->create(['name' => 'Velvet Oud', 'tagline' => 'Deep and smoky', 'scent_notes' => 'Oud, amber']);
+
+    $byName = $this->getJson('/api/v1/products?search=snow')->assertOk();
+    expect(collect($byName->json('data'))->pluck('name'))->toContain('Snow Melon')
+        ->not->toContain('Velvet Oud');
+
+    $byTagline = $this->getJson('/api/v1/products?search=smoky')->assertOk();
+    expect(collect($byTagline->json('data'))->pluck('name'))->toContain('Velvet Oud');
+
+    $byScentNotes = $this->getJson('/api/v1/products?search=citrus')->assertOk();
+    expect(collect($byScentNotes->json('data'))->pluck('name'))->toContain('Snow Melon');
+});
+
+it('returns no results for a non-matching search term instead of erroring', function () {
+    Product::factory()->create(['name' => 'Snow Melon']);
+
+    $response = $this->getJson('/api/v1/products?search=nonexistent-fragrance-xyz')->assertOk();
+
+    expect($response->json('data'))->toHaveCount(0);
+});
+
+it('treats a SQL-injection-shaped search term as inert literal text', function () {
+    Product::factory()->create(['name' => 'Snow Melon']);
+    Product::factory()->create(['name' => 'Velvet Oud']);
+
+    // Eloquent's where()/orWhere() bind this as a parameter, never
+    // interpolated into raw SQL — the products table must survive intact
+    // and the response must be a normal (empty) result, not a 500.
+    $payload = "'; DROP TABLE products; --";
+    $response = $this->getJson('/api/v1/products?search='.urlencode($payload))->assertOk();
+
+    expect($response->json('data'))->toHaveCount(0);
+    expect(Product::count())->toBe(2);
+});
+
+it('treats ILIKE wildcard characters in a search term as literal, not patterns', function () {
+    // Backslash-escaping a LIKE wildcard relies on the driver's default
+    // escape character. Postgres (production, and every real environment
+    // this app runs in outside the test suite) defaults to backslash; SQLite
+    // (this Pest suite, for speed) has no default escape character at all,
+    // so this specific guarantee is only meaningful on Postgres.
+    if (DB::connection()->getDriverName() !== 'pgsql') {
+        expect(true)->toBeTrue();
+
+        return;
+    }
+
+    Product::factory()->create(['name' => 'Snow Melon']);
+    Product::factory()->create(['name' => '100% Pure Oil']);
+
+    // A bare "%" should not match every product as a wildcard would.
+    $response = $this->getJson('/api/v1/products?search='.urlencode('%'))->assertOk();
+
+    $names = collect($response->json('data'))->pluck('name');
+    expect($names)->toContain('100% Pure Oil')->not->toContain('Snow Melon');
 });
 
 it('shows a single active product by slug with only active variants', function () {

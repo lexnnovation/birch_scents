@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import { MobileNav } from "./MobileNav";
 import { AccountButton } from "./AccountButton";
 import { CartButton } from "@/components/cart/CartButton";
+import { SearchTrigger } from "./SearchTrigger";
 
 export const primaryNav = [
   { label: "Shop All", href: "/shop" },
@@ -26,13 +27,10 @@ export function Header() {
         {/* left: hamburger (mobile) / search (desktop) */}
         <div className="flex flex-1 items-center gap-2">
           <MobileNav links={primaryNav} />
-          <button
-            aria-label="Search"
-            className="border-border text-muted-foreground hidden items-center gap-2 border-b pb-1 text-sm md:flex"
-          >
+          <SearchTrigger className="border-border text-muted-foreground hidden items-center gap-2 border-b pb-1 text-sm md:flex">
             <Search className="size-4" />
             <span>Search fragrances…</span>
-          </button>
+          </SearchTrigger>
         </div>
 
         {/* center: logo */}
@@ -45,9 +43,9 @@ export function Header() {
 
         {/* right: account + cart */}
         <div className="flex flex-1 items-center justify-end gap-4">
-          <button aria-label="Search" className="md:hidden">
+          <SearchTrigger className="md:hidden">
             <Search className="size-5" />
-          </button>
+          </SearchTrigger>
           <AccountButton />
           <CartButton />
         </div>

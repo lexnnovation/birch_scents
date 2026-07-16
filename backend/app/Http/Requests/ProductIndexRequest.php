@@ -16,6 +16,7 @@ class ProductIndexRequest extends FormRequest
         return [
             'category' => ['sometimes', 'string'],
             'featured' => ['sometimes', 'in:true,false,1,0'],
+            'search' => ['sometimes', 'string', 'max:100'],
             'page' => ['sometimes', 'integer', 'min:1'],
             'perPage' => ['sometimes', 'integer', 'min:1', 'max:100'],
         ];

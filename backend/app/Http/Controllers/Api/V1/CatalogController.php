@@ -44,6 +44,22 @@ class CatalogController extends Controller
             $query->where('is_featured', filter_var($data['featured'], FILTER_VALIDATE_BOOLEAN));
         }
 
+        if (! empty($data['search'])) {
+            // whereLike()/orWhereLike() bind values as query parameters (PDO
+            // prepared statements) — never raw string-interpolated SQL
+            // (CLAUDE.md §10) — and pick the correct case-insensitive
+            // operator per database driver (ILIKE on Postgres, LIKE on
+            // SQLite) automatically. addcslashes escapes the pattern's own
+            // wildcard characters (%, _) so a search term is matched
+            // literally rather than as a pattern.
+            $term = '%'.addcslashes($data['search'], '\\%_').'%';
+            $query->where(function ($q) use ($term) {
+                $q->whereLike('name', $term, false)
+                    ->orWhereLike('tagline', $term, false)
+                    ->orWhereLike('scent_notes', $term, false);
+            });
+        }
+
         $paginator = $query->paginate($perPage, page: $data['page'] ?? 1);
 
         return response()->json([

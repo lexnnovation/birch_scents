@@ -6,15 +6,16 @@ import { apiFetch } from "./client";
 export interface GetProductsParams {
   categorySlug?: string;
   featured?: boolean;
+  search?: string;
   page?: number;
   perPage?: number;
 }
 
 export function getProducts(params: GetProductsParams = {}): Promise<Paginated<Product>> {
-  const { categorySlug, featured, page = 1, perPage = 12 } = params;
+  const { categorySlug, featured, search, page = 1, perPage = 12 } = params;
 
   return apiFetch<Paginated<Product>>("/products", {
-    params: { category: categorySlug, featured, page, perPage },
+    params: { category: categorySlug, featured, search, page, perPage },
   });
 }
 

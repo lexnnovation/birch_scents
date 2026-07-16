@@ -28,10 +28,14 @@ Route::get('health', HealthController::class)->name('health');
 Route::post('webhooks/paystack', [PaystackWebhookController::class, 'handle'])
     ->middleware('throttle:60,1');
 
-// Public catalog — no auth required.
-Route::get('categories', [CatalogController::class, 'categories']);
-Route::get('products', [CatalogController::class, 'products']);
-Route::get('products/{product}', [CatalogController::class, 'show']);
+// Public catalog — no auth required. Rate-limited since it's unauthenticated
+// and publicly reachable (search in particular runs a query across 3 columns
+// per request); same per-IP limit as the webhook route.
+Route::middleware('throttle:60,1')->group(function () {
+    Route::get('categories', [CatalogController::class, 'categories']);
+    Route::get('products', [CatalogController::class, 'products']);
+    Route::get('products/{product}', [CatalogController::class, 'show']);
+});
 
 // Customer routes — own data only.
 Route::middleware('auth.supabase')->group(function () {

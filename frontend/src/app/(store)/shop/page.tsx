@@ -12,7 +12,15 @@ export const metadata: Metadata = {
 // let Next bake a build-time snapshot into static HTML.
 export const dynamic = "force-dynamic";
 
-export default async function ShopPage() {
-  const page = await getProducts({ perPage: 100 });
-  return <ProductGrid products={page.data} />;
+type Props = { searchParams: Promise<{ q?: string }> };
+
+export default async function ShopPage({ searchParams }: Props) {
+  const { q } = await searchParams;
+  const page = await getProducts({ search: q, perPage: 100 });
+  return (
+    <ProductGrid
+      products={page.data}
+      emptyMessage={q ? `No fragrances match “${q}”.` : undefined}
+    />
+  );
 }
