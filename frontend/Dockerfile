@@ -26,6 +26,9 @@ RUN npm run build
 FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+# Coolify's healthcheck runs curl/wget inside the container against
+# http://localhost:3000/ — node:22-alpine has neither by default.
+RUN apk add --no-cache curl
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
