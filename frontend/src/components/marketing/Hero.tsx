@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion, type PanInfo } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { fadeIn, fadeUp, revealTransition } from "@/lib/motion";
+import { fadeUp, revealTransition } from "@/lib/motion";
 
 interface HeroSlide {
   image: string;
@@ -47,6 +47,7 @@ const SLIDES: HeroSlide[] = [
 ];
 
 const AUTO_ADVANCE_MS = 6000;
+const SWIPE_THRESHOLD = 50;
 
 export function Hero() {
   const [index, setIndex] = useState(0);
@@ -64,6 +65,17 @@ export function Hero() {
     };
   }, [reducedMotion, paused, index]);
 
+  function next() {
+    setIndex((i) => (i + 1) % SLIDES.length);
+  }
+  function prev() {
+    setIndex((i) => (i - 1 + SLIDES.length) % SLIDES.length);
+  }
+  function handleDragEnd(_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) {
+    if (info.offset.x < -SWIPE_THRESHOLD) next();
+    else if (info.offset.x > SWIPE_THRESHOLD) prev();
+  }
+
   const slide = SLIDES[index];
 
   return (
@@ -74,30 +86,33 @@ export function Hero() {
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={slide.image}
-          className="absolute inset-0"
-          initial="hidden"
-          animate="visible"
-          exit="hidden"
-          variants={fadeIn}
-          transition={revealTransition(reducedMotion)}
-        >
-          <Image
-            src={slide.image}
-            alt=""
-            fill
-            priority={index === 0}
-            sizes="100vw"
-            className="object-cover"
-          />
-        </motion.div>
-      </AnimatePresence>
-      <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/5 to-black/30" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/10 to-transparent" />
+      {/* All slides stay mounted (preloaded) and crossfade via opacity — a
+          mount/unmount-per-slide approach left lazy-loaded slides showing a
+          blank flash the first time the carousel reached them. */}
+      <motion.div
+        className="absolute inset-0 cursor-grab active:cursor-grabbing"
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.15}
+        onDragEnd={handleDragEnd}
+      >
+        {SLIDES.map((s, i) => (
+          <div
+            key={s.image}
+            className={cn(
+              "absolute inset-0 transition-opacity ease-out",
+              i === index ? "opacity-100" : "pointer-events-none opacity-0",
+            )}
+            style={{ transitionDuration: reducedMotion ? "0ms" : "600ms" }}
+          >
+            <Image src={s.image} alt="" fill priority sizes="100vw" className="object-cover" />
+          </div>
+        ))}
+      </motion.div>
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/25 via-black/5 to-black/30" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/40 via-black/10 to-transparent" />
 
-      <div className="relative mx-auto flex min-h-[560px] max-w-310 flex-col items-center justify-center px-4 py-24 text-center text-white md:px-8">
+      <div className="pointer-events-none relative mx-auto flex min-h-[560px] max-w-310 flex-col items-center justify-center px-4 py-24 text-center text-white md:min-h-[680px] md:px-8 md:py-28">
         <AnimatePresence mode="wait">
           <motion.div
             key={slide.headline}
@@ -115,7 +130,7 @@ export function Hero() {
             <p className="mt-5 max-w-[46ch] text-[15px] leading-relaxed text-white/90 md:text-base">
               {slide.body}
             </p>
-            <div className="mt-8">
+            <div className="pointer-events-auto mt-8">
               <Button asChild size="pill">
                 <Link href={slide.ctaHref}>{slide.ctaLabel}</Link>
               </Button>
@@ -123,7 +138,11 @@ export function Hero() {
           </motion.div>
         </AnimatePresence>
 
-        <div className="mt-10 flex gap-2" role="group" aria-label="Hero slides">
+        <div
+          className="pointer-events-auto mt-10 flex gap-2"
+          role="group"
+          aria-label="Hero slides"
+        >
           {SLIDES.map((s, i) => (
             <button
               key={s.image}
