@@ -1,6 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Category } from "@/types";
-import { placeholderGradient } from "@/lib/placeholder";
+import { getCategoryImage } from "@/lib/placeholder";
 import { Reveal } from "@/components/motion/Reveal";
 
 export function CategoryShowcase({ categories }: { categories: Category[] }) {
@@ -15,9 +16,12 @@ export function CategoryShowcase({ categories }: { categories: Category[] }) {
           {categories.map((c) => (
             <Link key={c.slug} href={`/shop/${c.slug}`} className="group block">
               <div className="relative aspect-[4/5] overflow-hidden rounded-xl">
-                <div
-                  className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
-                  style={{ background: placeholderGradient(c.slug) }}
+                <Image
+                  src={getCategoryImage(c.slug)}
+                  alt={c.name}
+                  fill
+                  sizes="(min-width: 768px) 23vw, 47vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-4">
