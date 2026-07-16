@@ -36,3 +36,21 @@ export function getCategoryImages(categorySlug: string): string[] {
 export function getCategoryImage(categorySlug: string): string {
   return getCategoryImages(categorySlug)[0];
 }
+
+/**
+ * Reed Diffusers' two reference photos are actually shot per size (100ml vs
+ * 150ml), not interchangeable — once both sizes of the same product can
+ * appear side by side (CategorySizeToggle's "All" tab), they need to show
+ * the correct bottle for that size, not an arbitrary one.
+ */
+const VARIANT_IMAGES: Record<string, Record<string, string>> = {
+  "reed-diffusers": {
+    "100ml": "/products/reed-diffuser-1.jpg",
+    "150ml": "/products/reed-diffuser-2.jpg",
+  },
+};
+
+/** Size-aware image for a category; falls back to the category's single representative image. */
+export function getVariantImage(categorySlug: string, sizeLabel: string): string {
+  return VARIANT_IMAGES[categorySlug]?.[sizeLabel] ?? getCategoryImage(categorySlug);
+}

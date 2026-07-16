@@ -7,7 +7,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { toast } from "sonner";
 import type { Product, VariantLabel } from "@/types";
 import { formatPesewas } from "@/lib/money";
-import { getCategoryImage } from "@/lib/placeholder";
+import { getVariantImage } from "@/lib/placeholder";
 import { useCart } from "@/stores/cart";
 import { cn } from "@/lib/utils";
 import { hoverLift } from "@/lib/motion";
@@ -17,12 +17,12 @@ import { ProductGrid } from "./ProductGrid";
 /**
  * An additional way to browse a category, aimed at bulk/wholesale buyers:
  * pick one size for the whole category, then add several scents at that
- * size with a single click each — no per-item size popover. Defaults to
- * "All", which renders the existing `ProductGrid` completely unchanged
- * (today's per-scent size picker). Only renders the toggle at all when the
- * category actually has more than one size across its products — a
- * single-size category (Humidifiers, Birch Vase, Car Fragrance) just shows
- * the plain grid, exactly as before.
+ * size with a single click each — no per-item size popover. "All" lists
+ * every product at every size it comes in as its own directly-addable card
+ * (no size picker needed there either — the size is already fixed per
+ * card). Only renders the toggle at all when the category actually has more
+ * than one size across its products — a single-size category (Humidifiers,
+ * Birch Vase, Car Fragrance) just shows the plain grid, exactly as before.
  */
 export function CategorySizeToggle({ products }: { products: Product[] }) {
   const sizes = Array.from(new Set(products.flatMap((p) => p.variants.map((v) => v.label))));
@@ -47,7 +47,7 @@ export function CategorySizeToggle({ products }: { products: Product[] }) {
       </div>
 
       {selected === "all" ? (
-        <ProductGrid products={products} />
+        <AllSizesProductGrid products={products} />
       ) : (
         <SizedProductGrid products={products} size={selected} />
       )}
@@ -98,6 +98,25 @@ function SizedProductGrid({ products, size }: { products: Product[]; size: Varia
   );
 }
 
+/** Every product at every size it comes in, each its own directly-addable card. */
+function AllSizesProductGrid({ products }: { products: Product[] }) {
+  const pairs = products.flatMap((p) => p.variants.map((v) => ({ product: p, size: v.label })));
+  if (pairs.length === 0) {
+    return (
+      <p className="text-muted-foreground py-20 text-center">
+        No fragrances here yet — check back soon.
+      </p>
+    );
+  }
+  return (
+    <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 lg:grid-cols-4">
+      {pairs.map(({ product, size }) => (
+        <SizedProductCard key={`${product.id}-${size}`} product={product} size={size} />
+      ))}
+    </div>
+  );
+}
+
 /** Size already fixed by the toggle above, so this is a single click straight to cart — no popover. */
 function SizedProductCard({ product, size }: { product: Product; size: VariantLabel }) {
   const addItem = useCart((s) => s.add);
@@ -134,7 +153,7 @@ function SizedProductCard({ product, size }: { product: Product; size: VariantLa
       <Link href={`/products/${product.slug}`} className="block">
         <div className="bg-secondary relative mb-3 aspect-square overflow-hidden rounded-xl">
           <Image
-            src={product.imageUrl ?? getCategoryImage(product.categorySlug)}
+            src={product.imageUrl ?? getVariantImage(product.categorySlug, size)}
             alt={product.name}
             fill
             sizes="(min-width: 1024px) 23vw, (min-width: 768px) 31vw, 47vw"
@@ -163,6 +182,7 @@ function SizedProductCard({ product, size }: { product: Product; size: VariantLa
         >
           {product.name}
         </h3>
+        <p className="text-muted-foreground text-xs">{size}</p>
       </Link>
 
       {variant && (
