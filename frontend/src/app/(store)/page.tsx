@@ -1,4 +1,4 @@
-import { getCategories, getFeaturedProducts } from "@/lib/api";
+import { getCategories, getFeaturedProducts, getProductBySlug } from "@/lib/api";
 import { Hero } from "@/components/marketing/Hero";
 import { TrustBar } from "@/components/marketing/TrustBar";
 import { CategoryShowcase } from "@/components/marketing/CategoryShowcase";
@@ -11,14 +11,18 @@ import { ForBusiness } from "@/components/marketing/ForBusiness";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [categories, featured] = await Promise.all([getCategories(), getFeaturedProducts(4)]);
+  const [categories, featured, signatureScent] = await Promise.all([
+    getCategories(),
+    getFeaturedProducts(4),
+    getProductBySlug("snow-melon"),
+  ]);
 
   return (
     <>
       <Hero />
       <TrustBar />
       <CategoryShowcase categories={categories} />
-      <SignatureScent />
+      {signatureScent && <SignatureScent product={signatureScent} />}
       <FeaturedProducts products={featured} />
       <ForBusiness />
     </>

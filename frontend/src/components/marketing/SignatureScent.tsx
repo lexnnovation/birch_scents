@@ -1,16 +1,23 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { placeholderGradient } from "@/lib/placeholder";
+import { getCategoryImage } from "@/lib/placeholder";
 import { Reveal } from "@/components/motion/Reveal";
+import type { Product } from "@/types";
 
-export function SignatureScent() {
+export function SignatureScent({ product }: { product: Product }) {
   return (
     <section className="bg-secondary/40">
       <Reveal className="mx-auto grid max-w-310 items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-8">
-        <div
-          className="order-first aspect-[4/3] rounded-2xl md:order-last md:aspect-square"
-          style={{ background: placeholderGradient("snow-melon") }}
-        />
+        <div className="relative order-first aspect-[4/3] overflow-hidden rounded-2xl md:order-last md:aspect-square">
+          <Image
+            src={product.imageUrl ?? getCategoryImage(product.categorySlug)}
+            alt={product.name}
+            fill
+            sizes="(min-width: 768px) 46vw, 100vw"
+            className="object-cover"
+          />
+        </div>
         <div>
           <p className="eyebrow">The signature scent</p>
           <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">Snow Melon</h2>
