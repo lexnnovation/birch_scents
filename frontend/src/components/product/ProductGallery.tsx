@@ -15,12 +15,16 @@ export function ProductGallery({ product }: { product: Product }) {
   const source = product.gallery.length > 0 ? product.gallery : getCategoryImages(product.categorySlug);
   const panels = Array.from({ length: 4 }, (_, i) => source[i % source.length]);
   const [active, setActive] = useState(0);
+  // Hover/focus previews a thumbnail without changing the persisted selection —
+  // clears back to `active` the moment the mouse leaves (or focus moves away).
+  const [hovered, setHovered] = useState<number | null>(null);
+  const displayed = hovered ?? active;
 
   return (
     <div>
       <div className="relative aspect-square w-full overflow-hidden rounded-2xl">
         <Image
-          src={panels[active]}
+          src={panels[displayed]}
           alt={product.name}
           fill
           priority
@@ -32,8 +36,13 @@ export function ProductGallery({ product }: { product: Product }) {
         {panels.map((src, i) => (
           <button
             key={i}
+            type="button"
             aria-label={`View image ${i + 1}`}
             onClick={() => setActive(i)}
+            onMouseEnter={() => setHovered(i)}
+            onMouseLeave={() => setHovered(null)}
+            onFocus={() => setHovered(i)}
+            onBlur={() => setHovered(null)}
             className={cn(
               "relative aspect-square overflow-hidden rounded-lg",
               i === active && "ring-brand ring-2 ring-offset-2",
