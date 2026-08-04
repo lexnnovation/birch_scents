@@ -14,6 +14,28 @@ import { hoverLift } from "@/lib/motion";
 import { Button } from "@/components/ui/button";
 import { ProductGrid } from "./ProductGrid";
 
+/** Wraps card content in a real link when available; a plain, non-navigating div otherwise. */
+function CardLink({
+  href,
+  disabled,
+  className,
+  children,
+}: {
+  href: string;
+  disabled: boolean;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  if (disabled) {
+    return <div className={className}>{children}</div>;
+  }
+  return (
+    <Link href={href} className={className}>
+      {children}
+    </Link>
+  );
+}
+
 /**
  * An additional way to browse a category, aimed at bulk/wholesale buyers:
  * pick one size for the whole category, then add several scents at that
@@ -124,6 +146,13 @@ function SizedProductCard({ product, size }: { product: Product; size: VariantLa
   const available = !!variant && variant.isActive && variant.stock > 0;
   const reducedMotion = useReducedMotion();
 
+  // Falls back to the product's own cheapest price when it doesn't come in
+  // this size at all, so every card in the row shows a price and stays
+  // aligned — not just the ones with a matching variant.
+  const displayPrice =
+    variant?.pricePesewas ??
+    product.variants.reduce((min, v) => Math.min(min, v.pricePesewas), Infinity);
+
   function add() {
     if (!variant) return;
     addItem(
@@ -150,7 +179,7 @@ function SizedProductCard({ product, size }: { product: Product; size: VariantLa
       variants={hoverLift}
       transition={reducedMotion ? { duration: 0 } : { duration: 0.25, ease: "easeOut" }}
     >
-      <Link href={`/products/${product.slug}`} className="block">
+      <CardLink href={`/products/${product.slug}`} disabled={!available} className="block">
         <div className="bg-secondary relative mb-3 aspect-square overflow-hidden rounded-xl">
           <Image
             src={product.imageUrl ?? getVariantImage(product.categorySlug, size)}
@@ -183,18 +212,16 @@ function SizedProductCard({ product, size }: { product: Product; size: VariantLa
           {product.name}
         </h3>
         <p className="text-muted-foreground text-xs">{size}</p>
-      </Link>
+      </CardLink>
 
-      {variant && (
-        <span
-          className={cn(
-            "mt-1.5 block text-[15px] font-semibold tabular-nums",
-            !available && "text-muted-foreground",
-          )}
-        >
-          {formatPesewas(variant.pricePesewas)}
-        </span>
-      )}
+      <span
+        className={cn(
+          "mt-1.5 block text-[15px] font-semibold tabular-nums",
+          !available && "text-muted-foreground",
+        )}
+      >
+        {formatPesewas(displayPrice)}
+      </span>
 
       <div className="mt-1.5 flex flex-col gap-2 md:flex-row">
         <Button
@@ -206,15 +233,27 @@ function SizedProductCard({ product, size }: { product: Product; size: VariantLa
         >
           Add to cart
         </Button>
-        <Button
-          asChild
-          type="button"
-          variant="outline"
-          size="sm"
-          className="h-auto flex-1 rounded-full px-4 py-2 tracking-wide uppercase"
-        >
-          <Link href={`/products/${product.slug}`}>More detail</Link>
-        </Button>
+        {available ? (
+          <Button
+            asChild
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-auto flex-1 rounded-full px-4 py-2 tracking-wide uppercase"
+          >
+            <Link href={`/products/${product.slug}`}>More detail</Link>
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled
+            className="h-auto flex-1 rounded-full px-4 py-2 tracking-wide uppercase"
+          >
+            More detail
+          </Button>
+        )}
       </div>
     </motion.div>
   );

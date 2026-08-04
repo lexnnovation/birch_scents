@@ -14,6 +14,28 @@ import { hoverLift } from "@/lib/motion";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
+/** Wraps card content in a real link when in stock; a plain, non-navigating div otherwise. */
+function CardLink({
+  href,
+  disabled,
+  className,
+  children,
+}: {
+  href: string;
+  disabled: boolean;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  if (disabled) {
+    return <div className={className}>{children}</div>;
+  }
+  return (
+    <Link href={href} className={className}>
+      {children}
+    </Link>
+  );
+}
+
 /** Storefront product card — grey rounded tile, sale/flagship pills, from-price, quick-add. */
 export function ProductCard({ product }: { product: Product }) {
   const cheapest = product.variants.reduce(
@@ -33,7 +55,7 @@ export function ProductCard({ product }: { product: Product }) {
       variants={hoverLift}
       transition={reducedMotion ? { duration: 0 } : { duration: 0.25, ease: "easeOut" }}
     >
-      <Link href={`/products/${product.slug}`} className="block">
+      <CardLink href={`/products/${product.slug}`} disabled={!inStock} className="block">
         <div className="bg-secondary relative mb-3 aspect-square overflow-hidden rounded-xl">
           <Image
             src={product.imageUrl ?? getCategoryImage(product.categorySlug)}
@@ -65,7 +87,7 @@ export function ProductCard({ product }: { product: Product }) {
           )}
         </div>
         <p className="eyebrow">{product.categoryName}</p>
-      </Link>
+      </CardLink>
 
       {/* Name links to the PDP too, but sits outside the image's <Link> so
           it can share this block with the price without nesting an anchor
@@ -73,7 +95,11 @@ export function ProductCard({ product }: { product: Product }) {
           breakpoint — sharing a row got cramped once a discount adds a
           third price element ("From" + price + struck-through compare
           price) right next to the name. */}
-      <Link href={`/products/${product.slug}`} className="mt-1 flex flex-col gap-1">
+      <CardLink
+        href={`/products/${product.slug}`}
+        disabled={!inStock}
+        className="mt-1 flex flex-col gap-1"
+      >
         <h3
           className={cn(
             "truncate text-[15px] leading-snug font-semibold tracking-tight",
@@ -98,7 +124,7 @@ export function ProductCard({ product }: { product: Product }) {
             </span>
           )}
         </span>
-      </Link>
+      </CardLink>
 
       {/* Sits where the price row used to be — a plain sibling, not wrapped
           in the PDP <Link>, since it's interactive. */}
