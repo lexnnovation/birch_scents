@@ -188,7 +188,7 @@ function SizedProductCard({ product, size }: { product: Product; size: VariantLa
             sizes="(min-width: 1024px) 23vw, (min-width: 768px) 31vw, 47vw"
             className={cn(
               "object-cover transition-transform duration-500",
-              available && "group-hover:scale-[1.04]",
+              available ? "group-hover:scale-[1.04]" : "opacity-40",
             )}
           />
           {product.isFeatured && available && (

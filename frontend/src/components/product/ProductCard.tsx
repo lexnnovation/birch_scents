@@ -64,7 +64,7 @@ export function ProductCard({ product }: { product: Product }) {
             sizes="(min-width: 1024px) 23vw, (min-width: 768px) 31vw, 47vw"
             className={cn(
               "object-cover transition-transform duration-500",
-              inStock && "group-hover:scale-[1.04]",
+              inStock ? "group-hover:scale-[1.04]" : "opacity-40",
             )}
           />
           {!inStock ? (
