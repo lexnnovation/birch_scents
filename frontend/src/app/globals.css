@@ -212,6 +212,16 @@
   }
 }
 
+/* Sweeping highlight band for Skeleton loading tiles (see ui/skeleton.tsx). */
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
 /* Every CSS transition/animation in the app (hover-scales, the cart drawer's
    slide-in, etc.) collapses to instant under reduced motion (CLAUDE.md §3) —
    a blanket rule here covers all of them, present and future, in one place.
