@@ -23,7 +23,7 @@ const CATEGORY_IMAGES: Record<string, string[]> = {
   "room-sprays": ["/products/room-spray.jpg"],
   "reed-diffusers": ["/products/reed-diffuser-1.jpg", "/products/reed-diffuser-2.jpg"],
   "fragrance-oils": ["/products/fragrance-oil.jpg"],
-  "car-fragrance": ["/products/car-fragrance.jpg"],
+  "car-diffuser": ["/products/car-fragrance.jpg"],
 };
 const FALLBACK_IMAGE = "/products/category-fallback.jpg";
 

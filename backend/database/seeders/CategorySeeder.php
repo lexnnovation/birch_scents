@@ -45,9 +45,9 @@ class CategorySeeder extends Seeder
                 'sort_order' => 5,
             ],
             [
-                'name' => 'Car Fragrance',
-                'slug' => 'car-fragrance',
-                'description' => 'A quiet ultrasonic diffuser and refill cartridges built for the commute — the Birchscents atmosphere, on the road.',
+                'name' => 'Car Diffuser',
+                'slug' => 'car-diffuser',
+                'description' => 'A quiet ultrasonic diffuser and refill box built for the commute — the Birchscents atmosphere, on the road.',
                 'sort_order' => 6,
             ],
         ];
