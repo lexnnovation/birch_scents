@@ -720,8 +720,8 @@ class ProductSeeder extends Seeder
             // ---------------------------- Humidifiers -----------------------------
             [
                 'categorySlug' => 'humidifiers',
-                'name' => 'Mist Botanica',
-                'slug' => 'mist-botanica',
+                'name' => 'Birch Humidifier',
+                'slug' => 'birch-humidifier',
                 'tagline' => 'Fragrance as fine mist',
                 'description' => 'A quiet ultrasonic humidifier that carries your favourite oils as a cool, even mist — with a soft ambient glow.',
                 'scent_notes' => 'Pairs with any Birchscents oil',
@@ -729,21 +729,7 @@ class ProductSeeder extends Seeder
                 'is_featured' => true,
                 'is_active' => true,
                 'variants' => [
-                    ['sku' => 'BS-HU-BOT-STD', 'label' => 'Standard', 'price_pesewas' => 34000, 'compare_at_pesewas' => null, 'stock' => 16, 'is_active' => true],
-                ],
-            ],
-            [
-                'categorySlug' => 'humidifiers',
-                'name' => 'Aura Mini',
-                'slug' => 'aura-mini',
-                'tagline' => 'Compact and quiet',
-                'description' => 'A desk-sized humidifier for offices and bedside tables — gentle mist, whisper-quiet, USB-powered.',
-                'scent_notes' => 'Pairs with any Birchscents oil',
-                'gallery' => [],
-                'is_featured' => false,
-                'is_active' => true,
-                'variants' => [
-                    ['sku' => 'BS-HU-AUR-STD', 'label' => 'Standard', 'price_pesewas' => 21000, 'compare_at_pesewas' => null, 'stock' => 27, 'is_active' => true],
+                    ['sku' => 'BS-HU-BIR-STD', 'label' => 'Standard', 'price_pesewas' => 34000, 'compare_at_pesewas' => null, 'stock' => 20, 'is_active' => true],
                 ],
             ],
 
