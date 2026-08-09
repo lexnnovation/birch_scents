@@ -380,7 +380,7 @@ class ProductSeeder extends Seeder
                     '/products/cingamot/3.webp',
                     '/products/cingamot/4.webp',
                 ],
-                'is_featured' => false,
+                'is_featured' => true,
                 'is_active' => true,
                 'variants' => [
                     ['sku' => 'BS-RD-CIN-150', 'label' => '150ml', 'price_pesewas' => 32000, 'compare_at_pesewas' => null, 'stock' => 20, 'is_active' => true],
