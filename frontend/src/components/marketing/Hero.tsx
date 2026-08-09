@@ -137,7 +137,7 @@ export function Hero() {
             className="flex flex-col items-center md:items-start"
           >
             <p className="eyebrow text-white/85">{slide.eyebrow}</p>
-            <h1 className="mt-4 max-w-[16ch] text-4xl leading-[1.05] font-extrabold text-balance md:text-6xl">
+            <h1 className="mt-4 max-w-[16ch] text-4xl leading-[1.05] font-extrabold text-balance md:text-7xl">
               {slide.headline}
             </h1>
             <div className="pointer-events-auto mt-4">
