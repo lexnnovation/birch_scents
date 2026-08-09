@@ -107,7 +107,7 @@ function SizedProductGrid({ products, size }: { products: Product[]; size: Varia
   if (products.length === 0) {
     return (
       <p className="text-muted-foreground py-20 text-center">
-        No fragrances here yet — check back soon.
+        No products here yet — check back soon.
       </p>
     );
   }
@@ -126,7 +126,7 @@ function AllSizesProductGrid({ products }: { products: Product[] }) {
   if (pairs.length === 0) {
     return (
       <p className="text-muted-foreground py-20 text-center">
-        No fragrances here yet — check back soon.
+        No products here yet — check back soon.
       </p>
     );
   }

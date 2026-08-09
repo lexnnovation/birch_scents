@@ -3,7 +3,7 @@ import { ProductCard } from "./ProductCard";
 
 export function ProductGrid({
   products,
-  emptyMessage = "No fragrances here yet — check back soon.",
+  emptyMessage = "No products here yet — check back soon.",
 }: {
   products: Product[];
   emptyMessage?: string;
