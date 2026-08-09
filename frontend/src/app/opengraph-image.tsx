@@ -1,9 +1,14 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function OpengraphImage() {
+export default async function OpengraphImage() {
+  const logo = await readFile(join(process.cwd(), "src/app/icon.png"));
+  const logoSrc = `data:image/png;base64,${logo.toString("base64")}`;
+
   return new ImageResponse(
     (
       <div
@@ -18,9 +23,11 @@ export default function OpengraphImage() {
           fontFamily: "sans-serif",
         }}
       >
+        <img src={logoSrc} width={220} height={220} alt="" />
         <div
           style={{
-            fontSize: 96,
+            marginTop: 24,
+            fontSize: 80,
             fontWeight: 800,
             letterSpacing: "0.02em",
             color: "#161513",
@@ -30,8 +37,8 @@ export default function OpengraphImage() {
         </div>
         <div
           style={{
-            marginTop: 28,
-            fontSize: 34,
+            marginTop: 20,
+            fontSize: 30,
             fontWeight: 500,
             color: "#1f7a52",
           }}
