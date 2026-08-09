@@ -21,21 +21,22 @@ function pickRandomInStockProduct(products: Product[]): Product | null {
 }
 
 export default async function HomePage() {
-  const [categories, featured, signatureScent] = await Promise.all([
+  const [categories, featured, signatureScent, allProducts] = await Promise.all([
     getCategories(),
     getFeaturedProducts(4),
     getProductBySlug("snow-melon"),
+    getProducts({ perPage: 100 }).then((r) => r.data),
   ]);
-
-  const categoryProductLists = await Promise.all(
-    categories.map((c) => getProducts({ categorySlug: c.slug, perPage: 100 }).then((r) => r.data)),
-  );
 
   // A different real product photo (with its hover pair) per category tile
   // on every load, instead of one fixed category-level placeholder image.
-  const showcaseItems = categories.map((category, i) => ({
+  // Grouped from a single catalog-wide fetch (rather than one request per
+  // category) since every visitor's SSR request shares the backend's
+  // per-IP rate limit — 6 extra calls per home page load was enough to
+  // trip it under light traffic.
+  const showcaseItems = categories.map((category) => ({
     category,
-    product: pickRandomInStockProduct(categoryProductLists[i]),
+    product: pickRandomInStockProduct(allProducts.filter((p) => p.categorySlug === category.slug)),
   }));
 
   return (
