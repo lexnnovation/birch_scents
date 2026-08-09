@@ -18,8 +18,8 @@ use Illuminate\Database\Seeder;
  * than deleted, so any existing order history stays intact.
  *
  * Prices are flat placeholders per size tier pending real business pricing —
- * edit per-scent via the admin product UI once that's decided. Imagery is
- * intentionally null until real photography lands in Phase 11.
+ * edit per-scent via the admin product UI once that's decided. Imagery
+ * (image_url + gallery) points at frontend/public/products/<slug>/*.webp.
  */
 class ProductSeeder extends Seeder
 {
@@ -87,7 +87,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Our signature scent',
                 'description' => 'A crisp, sweet and refreshing fragrance that instantly brightens any room while creating a welcoming luxury atmosphere.',
                 'scent_notes' => 'Crisp melon, sweet citrus, clean musk',
-                'gallery' => [],
+                'image_url' => '/products/snow-melon/1.webp',
+                'gallery' => [
+                    '/products/snow-melon/2.webp',
+                    '/products/snow-melon/3.webp',
+                    '/products/snow-melon/4.webp',
+                ],
                 'is_featured' => true,
                 'is_active' => true,
                 'variants' => [
@@ -101,7 +106,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Playful and sweet',
                 'description' => 'A nostalgic, candy-bright bubblegum accord — sweet, fun, and unapologetically joyful.',
                 'scent_notes' => 'Bubblegum, sugared fruit, soft musk',
-                'gallery' => [],
+                'image_url' => '/products/bubble-gum/1.webp',
+                'gallery' => [
+                    '/products/bubble-gum/2.webp',
+                    '/products/bubble-gum/3.webp',
+                    '/products/bubble-gum/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -115,7 +125,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Dark and citrus-forward',
                 'description' => 'Bright citrus grounded in dark woods and amber — bold enough for a statement room.',
                 'scent_notes' => 'Bergamot, dark woods, amber',
-                'gallery' => [],
+                'image_url' => '/products/citrus-noir/1.webp',
+                'gallery' => [
+                    '/products/citrus-noir/2.webp',
+                    '/products/citrus-noir/3.webp',
+                    '/products/citrus-noir/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -129,7 +144,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Fresh and floral',
                 'description' => 'Ripe strawberry woven through soft florals — bright, feminine, and full of bloom.',
                 'scent_notes' => 'Strawberry, white florals, soft musk',
-                'gallery' => [],
+                'image_url' => '/products/bloom-strawberry/1.webp',
+                'gallery' => [
+                    '/products/bloom-strawberry/2.webp',
+                    '/products/bloom-strawberry/3.webp',
+                    '/products/bloom-strawberry/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -143,7 +163,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Airy and weightless',
                 'description' => 'A soft, powdery musk with a barely-there sweetness — calm, clean, and effortless.',
                 'scent_notes' => 'Soft musk, powder, white florals',
-                'gallery' => [],
+                'image_url' => '/products/cloud-9/1.webp',
+                'gallery' => [
+                    '/products/cloud-9/2.webp',
+                    '/products/cloud-9/3.webp',
+                    '/products/cloud-9/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -157,7 +182,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Delicate and floral',
                 'description' => 'Pale cherry blossom in full, fleeting bloom — light, romantic, and quietly elegant.',
                 'scent_notes' => 'Cherry blossom, soft petals, light musk',
-                'gallery' => [],
+                'image_url' => '/products/cherry-blossom/1.webp',
+                'gallery' => [
+                    '/products/cherry-blossom/2.webp',
+                    '/products/cherry-blossom/3.webp',
+                    '/products/cherry-blossom/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -171,7 +201,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Calm meets bright',
                 'description' => 'Soothing lavender lifted by fresh citrus — grounding and energizing in equal measure.',
                 'scent_notes' => 'Lavender, bergamot, citrus zest',
-                'gallery' => [],
+                'image_url' => '/products/lavender-and-citrus/1.webp',
+                'gallery' => [
+                    '/products/lavender-and-citrus/2.webp',
+                    '/products/lavender-and-citrus/3.webp',
+                    '/products/lavender-and-citrus/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -183,9 +218,14 @@ class ProductSeeder extends Seeder
                 'name' => 'Tarim Peach',
                 'slug' => 'tarim-peach',
                 'tagline' => 'Juicy and warm',
-                'description' => "A fuller, warmer peach than the everyday kind — sun-ripened and generously sweet.",
+                'description' => 'A fuller, warmer peach than the everyday kind — sun-ripened and generously sweet.',
                 'scent_notes' => 'Peach, apricot, warm florals',
-                'gallery' => [],
+                'image_url' => '/products/tarim-peach/1.webp',
+                'gallery' => [
+                    '/products/tarim-peach/2.webp',
+                    '/products/tarim-peach/3.webp',
+                    '/products/tarim-peach/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -199,7 +239,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Ripe and sunlit',
                 'description' => 'Garden-ripe mango with a green, leafy edge — tropical without tipping into candy-sweet.',
                 'scent_notes' => 'Mango, green leaves, soft citrus',
-                'gallery' => [],
+                'image_url' => '/products/garden-mango/1.webp',
+                'gallery' => [
+                    '/products/garden-mango/2.webp',
+                    '/products/garden-mango/3.webp',
+                    '/products/garden-mango/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -213,7 +258,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Bright and juicy',
                 'description' => 'A layered tropical fruit accord — nectar-sweet, sun-warmed, and instantly transporting.',
                 'scent_notes' => 'Tropical fruit, nectar, light citrus',
-                'gallery' => [],
+                'image_url' => '/products/tropical-nectar/1.webp',
+                'gallery' => [
+                    '/products/tropical-nectar/2.webp',
+                    '/products/tropical-nectar/3.webp',
+                    '/products/tropical-nectar/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -227,7 +277,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Rich and inviting',
                 'description' => 'Deep caramel softened with vanilla and a touch of warm spice — indulgent without heaviness.',
                 'scent_notes' => 'Caramel, vanilla, warm spice',
-                'gallery' => [],
+                'image_url' => '/products/caramel-muse/1.webp',
+                'gallery' => [
+                    '/products/caramel-muse/2.webp',
+                    '/products/caramel-muse/3.webp',
+                    '/products/caramel-muse/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -241,7 +296,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Bold and juicy',
                 'description' => 'True, dark cherry at full ripeness — bold, juicy, and a little daring.',
                 'scent_notes' => 'Cherry, dark berries, light musk',
-                'gallery' => [],
+                'image_url' => '/products/fruity-cherry/1.webp',
+                'gallery' => [
+                    '/products/fruity-cherry/2.webp',
+                    '/products/fruity-cherry/3.webp',
+                    '/products/fruity-cherry/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -255,7 +315,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Rich and layered',
                 'description' => 'A jammy blend of dark berries — layered, rich, and generously fruity.',
                 'scent_notes' => 'Blackberry, blueberry, red currant',
-                'gallery' => [],
+                'image_url' => '/products/mixed-berries/1.webp',
+                'gallery' => [
+                    '/products/mixed-berries/2.webp',
+                    '/products/mixed-berries/3.webp',
+                    '/products/mixed-berries/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -269,7 +334,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Warm and roasted',
                 'description' => 'Freshly steamed coffee softened with warm milk — the scent of a slow morning ritual.',
                 'scent_notes' => 'Coffee, steamed milk, vanilla',
-                'gallery' => [],
+                'image_url' => '/products/coffee-latte/1.webp',
+                'gallery' => [
+                    '/products/coffee-latte/2.webp',
+                    '/products/coffee-latte/3.webp',
+                    '/products/coffee-latte/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -285,7 +355,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Warm and musky',
                 'description' => 'A warm amber softened with musk — quiet, grounded, and long-lasting.',
                 'scent_notes' => 'Amber, musk, warm woods',
-                'gallery' => [],
+                'image_url' => '/products/ambusk/1.webp',
+                'gallery' => [
+                    '/products/ambusk/2.webp',
+                    '/products/ambusk/3.webp',
+                    '/products/ambusk/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -299,7 +374,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Spiced and citrus-bright',
                 'description' => 'Warm cinnamon meets fresh bergamot — a spiced citrus accord with real depth.',
                 'scent_notes' => 'Cinnamon, bergamot, warm spice',
-                'gallery' => [],
+                'image_url' => '/products/cingamot/1.webp',
+                'gallery' => [
+                    '/products/cingamot/2.webp',
+                    '/products/cingamot/3.webp',
+                    '/products/cingamot/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -313,7 +393,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Buttery and warm',
                 'description' => 'Slow-cooked caramel, buttery and warm — an indulgent scent for cooler evenings.',
                 'scent_notes' => 'Caramel, brown butter, vanilla',
-                'gallery' => [],
+                'image_url' => '/products/sweet-caramel/1.webp',
+                'gallery' => [
+                    '/products/sweet-caramel/2.webp',
+                    '/products/sweet-caramel/3.webp',
+                    '/products/sweet-caramel/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -327,7 +412,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Sweet and tropical',
                 'description' => 'Full, ripe mango rendered generously sweet — a bright, tropical centerpiece for any room.',
                 'scent_notes' => 'Mango, tropical fruit, light florals',
-                'gallery' => [],
+                'image_url' => '/products/mango-delight/1.webp',
+                'gallery' => [
+                    '/products/mango-delight/2.webp',
+                    '/products/mango-delight/3.webp',
+                    '/products/mango-delight/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -341,7 +431,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Crisp and sweet',
                 'description' => 'A pale, honeyed melon with a crisp, watery freshness — light and refreshing.',
                 'scent_notes' => 'Hami melon, light citrus, clean musk',
-                'gallery' => [],
+                'image_url' => '/products/hami-melon/1.webp',
+                'gallery' => [
+                    '/products/hami-melon/2.webp',
+                    '/products/hami-melon/3.webp',
+                    '/products/hami-melon/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -355,7 +450,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Refined and pale',
                 'description' => 'A lighter, whiter take on oud — smooth, refined, and far softer than traditional oud.',
                 'scent_notes' => 'White oud, soft musk, light amber',
-                'gallery' => [],
+                'image_url' => '/products/oud-blanc/1.webp',
+                'gallery' => [
+                    '/products/oud-blanc/2.webp',
+                    '/products/oud-blanc/3.webp',
+                    '/products/oud-blanc/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -369,7 +469,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Deep and plush',
                 'description' => 'A rich, layered accord of dark fruit and soft musk — plush, deep, and enveloping.',
                 'scent_notes' => 'Dark fruit, soft musk, warm amber',
-                'gallery' => [],
+                'image_url' => '/products/velvet/1.webp',
+                'gallery' => [
+                    '/products/velvet/2.webp',
+                    '/products/velvet/3.webp',
+                    '/products/velvet/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -383,7 +488,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Bright and energizing',
                 'description' => 'A vivid citrus burst with a green herbal edge — sharp, clean, and instantly uplifting.',
                 'scent_notes' => 'Citrus zest, green herbs, light musk',
-                'gallery' => [],
+                'image_url' => '/products/zest/1.webp',
+                'gallery' => [
+                    '/products/zest/2.webp',
+                    '/products/zest/3.webp',
+                    '/products/zest/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -397,7 +507,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Clean and crisp',
                 'description' => 'The scent of line-dried linen on a clear day — clean, soft, and quietly comforting.',
                 'scent_notes' => 'Clean linen, white musk, soft powder',
-                'gallery' => [],
+                'image_url' => '/products/fresh-linen/1.webp',
+                'gallery' => [
+                    '/products/fresh-linen/2.webp',
+                    '/products/fresh-linen/3.webp',
+                    '/products/fresh-linen/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -409,9 +524,14 @@ class ProductSeeder extends Seeder
                 'name' => 'Oasis',
                 'slug' => 'oasis',
                 'tagline' => 'Cool and green',
-                'description' => "A cool, watery green accord with a soft floral heart — the scent of shade on a warm day.",
+                'description' => 'A cool, watery green accord with a soft floral heart — the scent of shade on a warm day.',
                 'scent_notes' => 'Green leaves, water lily, soft musk',
-                'gallery' => [],
+                'image_url' => '/products/oasis/1.webp',
+                'gallery' => [
+                    '/products/oasis/2.webp',
+                    '/products/oasis/3.webp',
+                    '/products/oasis/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -427,7 +547,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Fresh and youthful',
                 'description' => 'A crisp, clean fragrance with a soft aquatic edge — bright and effortlessly fresh.',
                 'scent_notes' => 'Aquatic notes, light citrus, clean musk',
-                'gallery' => [],
+                'image_url' => '/products/juve/1.webp',
+                'gallery' => [
+                    '/products/juve/2.webp',
+                    '/products/juve/3.webp',
+                    '/products/juve/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -441,7 +566,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Rich and warm',
                 'description' => 'Deep, warm cocoa softened with vanilla — a comforting fragrance for cooler rooms and evenings.',
                 'scent_notes' => 'Cocoa, vanilla, warm sugar',
-                'gallery' => [],
+                'image_url' => '/products/colate/1.webp',
+                'gallery' => [
+                    '/products/colate/2.webp',
+                    '/products/colate/3.webp',
+                    '/products/colate/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -455,7 +585,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Soft and exotic',
                 'description' => 'Delicate orchid with a soft, powdery finish — elegant, floral, and quietly luxurious.',
                 'scent_notes' => 'Orchid, soft powder, white musk',
-                'gallery' => [],
+                'image_url' => '/products/orchid/1.webp',
+                'gallery' => [
+                    '/products/orchid/2.webp',
+                    '/products/orchid/3.webp',
+                    '/products/orchid/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -469,7 +604,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Fresh and blooming',
                 'description' => 'New grass and blooming petals — the scent of the first warm day of the season.',
                 'scent_notes' => 'Green florals, fresh grass, light citrus',
-                'gallery' => [],
+                'image_url' => '/products/spring/1.webp',
+                'gallery' => [
+                    '/products/spring/2.webp',
+                    '/products/spring/3.webp',
+                    '/products/spring/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -483,7 +623,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Bright and radiant',
                 'description' => 'A luminous, sparkling fragrance with a soft musk base — polished and quietly radiant.',
                 'scent_notes' => 'Sparkling citrus, white florals, soft musk',
-                'gallery' => [],
+                'image_url' => '/products/lumineer/1.webp',
+                'gallery' => [
+                    '/products/lumineer/2.webp',
+                    '/products/lumineer/3.webp',
+                    '/products/lumineer/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -499,7 +644,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Crisp and invigorating',
                 'description' => 'A sharp, cooling peppermint that clears the air and sharpens focus — ideal for study spaces and morning routines.',
                 'scent_notes' => 'Peppermint, cool menthol, green herbs',
-                'gallery' => [],
+                'image_url' => '/products/peppermint/1.webp',
+                'gallery' => [
+                    '/products/peppermint/2.webp',
+                    '/products/peppermint/3.webp',
+                    '/products/peppermint/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -513,7 +663,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Clear and grounding',
                 'description' => 'A steam-room hush of eucalyptus leaf, calming and restorative — the scent of a slow exhale.',
                 'scent_notes' => 'Eucalyptus leaf, camphor, green herbs',
-                'gallery' => [],
+                'image_url' => '/products/eucalyptus/1.webp',
+                'gallery' => [
+                    '/products/eucalyptus/2.webp',
+                    '/products/eucalyptus/3.webp',
+                    '/products/eucalyptus/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -527,7 +682,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Bright and juicy',
                 'description' => 'Sun-warmed orange peel, effortlessly cheerful — a lift for kitchens and mornings.',
                 'scent_notes' => 'Orange peel, citrus zest, light sugar',
-                'gallery' => [],
+                'image_url' => '/products/sweet-orange/1.webp',
+                'gallery' => [
+                    '/products/sweet-orange/2.webp',
+                    '/products/sweet-orange/3.webp',
+                    '/products/sweet-orange/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -541,7 +701,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Warm and grounded',
                 'description' => 'Creamy sandalwood with a soft, milky warmth — a quiet, meditative base note worn alone.',
                 'scent_notes' => 'Sandalwood, cream, soft musk',
-                'gallery' => [],
+                'image_url' => '/products/sandalwood/1.webp',
+                'gallery' => [
+                    '/products/sandalwood/2.webp',
+                    '/products/sandalwood/3.webp',
+                    '/products/sandalwood/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -555,7 +720,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Rich and comforting',
                 'description' => 'Deep, buttery caramel without the sweetness turning cloying — the scent of a slow afternoon indoors.',
                 'scent_notes' => 'Caramel, brown sugar, warm vanilla',
-                'gallery' => [],
+                'image_url' => '/products/caramel/1.webp',
+                'gallery' => [
+                    '/products/caramel/2.webp',
+                    '/products/caramel/3.webp',
+                    '/products/caramel/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -569,7 +739,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Refined and woody',
                 'description' => 'A composed, masculine floral built on soft woods and a whisper of spice — understated and self-assured.',
                 'scent_notes' => 'White florals, cedar, black pepper',
-                'gallery' => [],
+                'image_url' => '/products/fleur-de-lhomme/1.webp',
+                'gallery' => [
+                    '/products/fleur-de-lhomme/2.webp',
+                    '/products/fleur-de-lhomme/3.webp',
+                    '/products/fleur-de-lhomme/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -583,7 +758,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Soft and luminous',
                 'description' => 'White rose at its most delicate — powdery, pale, and quietly romantic.',
                 'scent_notes' => 'White rose, powder, soft musk',
-                'gallery' => [],
+                'image_url' => '/products/rosa-bianca/1.webp',
+                'gallery' => [
+                    '/products/rosa-bianca/2.webp',
+                    '/products/rosa-bianca/3.webp',
+                    '/products/rosa-bianca/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -597,7 +777,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Calm and grounding',
                 'description' => "Classic lavender fields rendered soft and true — the scent of a settled mind at day's end.",
                 'scent_notes' => 'Lavender, herbal green, soft powder',
-                'gallery' => [],
+                'image_url' => '/products/lavender/1.webp',
+                'gallery' => [
+                    '/products/lavender/2.webp',
+                    '/products/lavender/3.webp',
+                    '/products/lavender/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -611,7 +796,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Zesty and cool',
                 'description' => 'Sweet orange brightened with fresh mint — an energizing pairing for kitchens and bathrooms alike.',
                 'scent_notes' => 'Orange, spearmint, green leaves',
-                'gallery' => [],
+                'image_url' => '/products/orange-mint/1.webp',
+                'gallery' => [
+                    '/products/orange-mint/2.webp',
+                    '/products/orange-mint/3.webp',
+                    '/products/orange-mint/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -625,7 +815,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Tropical and tart',
                 'description' => 'Vivid, tangy passion fruit with a sun-ripe sweetness — an instant transport to warmer places.',
                 'scent_notes' => 'Passion fruit, tropical citrus, light florals',
-                'gallery' => [],
+                'image_url' => '/products/passion-fruit/1.webp',
+                'gallery' => [
+                    '/products/passion-fruit/2.webp',
+                    '/products/passion-fruit/3.webp',
+                    '/products/passion-fruit/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -639,7 +834,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Soft and sun-ripened',
                 'description' => 'A blushing, velvety peach — sweet without excess, gentle on entry and lingering softly.',
                 'scent_notes' => 'Peach, soft florals, light musk',
-                'gallery' => [],
+                'image_url' => '/products/peach/1.webp',
+                'gallery' => [
+                    '/products/peach/2.webp',
+                    '/products/peach/3.webp',
+                    '/products/peach/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -653,7 +853,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Lush and exotic',
                 'description' => 'Full-bloom gardenia with a creamy, tropical richness — elegant and unmistakably lush.',
                 'scent_notes' => 'Gardenia, tiare flower, soft cream',
-                'gallery' => [],
+                'image_url' => '/products/tahitian-gardenia/1.webp',
+                'gallery' => [
+                    '/products/tahitian-gardenia/2.webp',
+                    '/products/tahitian-gardenia/3.webp',
+                    '/products/tahitian-gardenia/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -667,7 +872,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Sweet and tropical',
                 'description' => 'Ripe mango and pawpaw layered into a juicy, sun-drenched fruit accord.',
                 'scent_notes' => 'Mango, pawpaw, tropical nectar',
-                'gallery' => [],
+                'image_url' => '/products/mango-and-pawpaw/1.webp',
+                'gallery' => [
+                    '/products/mango-and-pawpaw/2.webp',
+                    '/products/mango-and-pawpaw/3.webp',
+                    '/products/mango-and-pawpaw/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -681,7 +891,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Sweet and familiar',
                 'description' => 'Ripe strawberry rendered true, not candied — bright, juicy, and quietly nostalgic.',
                 'scent_notes' => 'Strawberry, red berries, light musk',
-                'gallery' => [],
+                'image_url' => '/products/strawberry/1.webp',
+                'gallery' => [
+                    '/products/strawberry/2.webp',
+                    '/products/strawberry/3.webp',
+                    '/products/strawberry/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -695,7 +910,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Creamy and warm',
                 'description' => 'Steamed milk and vanilla bean — the scent of a slow morning coffee ritual.',
                 'scent_notes' => 'Vanilla bean, steamed milk, warm coffee',
-                'gallery' => [],
+                'image_url' => '/products/latte-vanille/1.webp',
+                'gallery' => [
+                    '/products/latte-vanille/2.webp',
+                    '/products/latte-vanille/3.webp',
+                    '/products/latte-vanille/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -709,7 +929,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Deep and fruity',
                 'description' => 'Dark grape and blueberry layered into a rich, jammy fruit accord with a soft finish.',
                 'scent_notes' => 'Grape, blueberry, dark berries',
-                'gallery' => [],
+                'image_url' => '/products/grape-blueberry/1.webp',
+                'gallery' => [
+                    '/products/grape-blueberry/2.webp',
+                    '/products/grape-blueberry/3.webp',
+                    '/products/grape-blueberry/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -725,7 +950,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Fragrance as fine mist',
                 'description' => 'A quiet ultrasonic humidifier that carries your favourite oils as a cool, even mist — with a soft ambient glow.',
                 'scent_notes' => 'Pairs with any Birchscents oil',
-                'gallery' => [],
+                'image_url' => '/products/birch-humidifier/1.webp',
+                'gallery' => [
+                    '/products/birch-humidifier/2.webp',
+                    '/products/birch-humidifier/3.webp',
+                    '/products/birch-humidifier/4.webp',
+                ],
                 'is_featured' => true,
                 'is_active' => true,
                 'variants' => [
@@ -741,7 +971,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'A vessel worth keeping',
                 'description' => 'Hand-glazed stoneware sized for our 100ml reed diffuser refills — as beautiful empty as it is full.',
                 'scent_notes' => 'Fits all Birchscents 100ml reed diffuser refills',
-                'gallery' => [],
+                'image_url' => '/products/birch-vase-standard/1.webp',
+                'gallery' => [
+                    '/products/birch-vase-standard/2.webp',
+                    '/products/birch-vase-standard/3.webp',
+                    '/products/birch-vase-standard/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
@@ -757,7 +992,14 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Your commute, elevated',
                 'description' => 'A compact ultrasonic diffuser that clips to your vent and carries a fine, even mist through the car — quiet, cordless, USB-powered.',
                 'scent_notes' => 'Pairs with the Car Diffuser Refill',
-                'gallery' => [],
+                'image_url' => '/products/ultrasonic-car-diffuser/1.webp',
+                'gallery' => [
+                    '/products/ultrasonic-car-diffuser/2.webp',
+                    '/products/ultrasonic-car-diffuser/3.webp',
+                    '/products/ultrasonic-car-diffuser/4.webp',
+                    '/products/ultrasonic-car-diffuser/5.webp',
+                    '/products/ultrasonic-car-diffuser/6.webp',
+                ],
                 'is_featured' => true,
                 'is_active' => true,
                 'variants' => [
@@ -771,7 +1013,12 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Keep the atmosphere going',
                 'description' => 'A refill box for the Ultrasonic Car Diffuser, stocked with an assortment of Birchscents signature scents — swap in a fresh cartridge as each one runs out.',
                 'scent_notes' => 'An assortment of Birchscents signature scents',
-                'gallery' => [],
+                'image_url' => '/products/car-diffuser-refill/1.webp',
+                'gallery' => [
+                    '/products/car-diffuser-refill/2.webp',
+                    '/products/car-diffuser-refill/3.webp',
+                    '/products/car-diffuser-refill/4.webp',
+                ],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
