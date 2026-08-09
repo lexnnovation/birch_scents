@@ -46,6 +46,7 @@ export function ProductCard({ product }: { product: Product }) {
   const multi = product.variants.length > 1;
   const inStock = product.variants.some((v) => v.isActive && v.stock > 0);
   const reducedMotion = useReducedMotion();
+  const hoverImage = product.gallery[0] ?? null;
 
   return (
     <motion.div
@@ -67,6 +68,16 @@ export function ProductCard({ product }: { product: Product }) {
               inStock ? "group-hover:scale-[1.04]" : "opacity-40",
             )}
           />
+          {hoverImage && inStock && (
+            <Image
+              src={hoverImage}
+              alt=""
+              aria-hidden="true"
+              fill
+              sizes="(min-width: 1024px) 23vw, (min-width: 768px) 31vw, 47vw"
+              className="object-cover opacity-0 transition-opacity duration-300 group-hover:scale-[1.04] group-hover:opacity-100 motion-reduce:transition-none"
+            />
+          )}
           {!inStock ? (
             <span className="bg-foreground text-background absolute top-2.5 left-2.5 rounded-md px-2.5 py-1.5 text-xs font-bold tracking-[0.08em] uppercase">
               Out of stock
