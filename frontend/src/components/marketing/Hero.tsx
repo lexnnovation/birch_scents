@@ -9,38 +9,36 @@ import { cn } from "@/lib/utils";
 import { fadeUp, revealTransition } from "@/lib/motion";
 
 interface HeroSlide {
-  image: string;
+  imageDesktop: string;
+  imageMobile: string;
   eyebrow: string;
   headline: string;
-  body: string;
   ctaLabel: string;
   ctaHref: string;
 }
 
-// Meantime reference photography (small source files — a visible upgrade
-// once real photography lands in Phase 11.7, no component changes needed).
 const SLIDES: HeroSlide[] = [
   {
-    image: "/hero/hero-1.jpg",
+    imageDesktop: "/hero/1-desktop.webp",
+    imageMobile: "/hero/1-mobile.webp",
     eyebrow: "Signature · Snow Melon",
     headline: "Inhale and Feel the Difference",
-    body: "A crisp, sweet, refreshing scent that turns any room into a welcome. FDA-approved, long-lasting, and crafted in Accra.",
     ctaLabel: "Shop Snow Melon",
     ctaHref: "/products/snow-melon",
   },
   {
-    image: "/hero/hero-2.jpg",
+    imageDesktop: "/hero/2-desktop.webp",
+    imageMobile: "/hero/2-mobile.webp",
     eyebrow: "Crafted in Accra",
     headline: "Find Your Signature Scent",
-    body: "Reed diffusers, room sprays, fragrance oils, and humidifiers — every atmosphere Birchscents makes, in one place.",
     ctaLabel: "Shop All Fragrances",
     ctaHref: "/shop",
   },
   {
-    image: "/hero/hero-3.jpg",
+    imageDesktop: "/hero/3-desktop.webp",
+    imageMobile: "/hero/3-mobile.webp",
     eyebrow: "Reed Diffusers",
     headline: "Effortless, All-Day Fragrance",
-    body: "No flame, no upkeep — just a slow, steady scent that fills a room and holds for weeks.",
     ctaLabel: "Shop Reed Diffusers",
     ctaHref: "/shop/reed-diffusers",
   },
@@ -80,7 +78,7 @@ export function Hero() {
 
   return (
     <section
-      className="relative overflow-hidden"
+      className="relative overflow-hidden md:aspect-[20/9]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -98,21 +96,36 @@ export function Hero() {
       >
         {SLIDES.map((s, i) => (
           <div
-            key={s.image}
+            key={s.imageDesktop}
             className={cn(
               "absolute inset-0 transition-opacity ease-out",
               i === index ? "opacity-100" : "pointer-events-none opacity-0",
             )}
             style={{ transitionDuration: reducedMotion ? "0ms" : "600ms" }}
           >
-            <Image src={s.image} alt="" fill priority sizes="100vw" className="object-cover" />
+            <Image
+              src={s.imageDesktop}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="hidden object-cover md:block"
+            />
+            <Image
+              src={s.imageMobile}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover md:hidden"
+            />
           </div>
         ))}
       </motion.div>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/25 via-black/5 to-black/30" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/40 via-black/10 to-transparent" />
 
-      <div className="pointer-events-none relative mx-auto flex min-h-[560px] max-w-310 flex-col items-center justify-center px-4 py-24 text-center text-white md:min-h-[680px] md:px-8 md:py-28">
+      <div className="pointer-events-none relative mx-auto flex min-h-[560px] max-w-310 flex-col items-center justify-start px-4 pt-16 pb-24 text-center text-white md:h-full md:min-h-0 md:items-start md:justify-center md:px-8 md:pt-16 md:pb-32 md:text-left">
         <AnimatePresence mode="wait">
           <motion.div
             key={slide.headline}
@@ -121,17 +134,19 @@ export function Hero() {
             exit="hidden"
             variants={fadeUp}
             transition={revealTransition(reducedMotion)}
-            className="flex flex-col items-center"
+            className="flex flex-col items-center md:items-start"
           >
             <p className="eyebrow text-white/85">{slide.eyebrow}</p>
             <h1 className="mt-4 max-w-[16ch] text-4xl leading-[1.05] font-extrabold text-balance md:text-6xl">
               {slide.headline}
             </h1>
-            <p className="mt-5 max-w-[46ch] text-[15px] leading-relaxed text-white/90 md:text-base">
-              {slide.body}
-            </p>
             <div className="pointer-events-auto mt-8">
-              <Button asChild size="pill">
+              <Button
+                asChild
+                variant="brand"
+                size="pill"
+                className="hover:bg-background hover:text-foreground"
+              >
                 <Link href={slide.ctaHref}>{slide.ctaLabel}</Link>
               </Button>
             </div>
@@ -139,13 +154,13 @@ export function Hero() {
         </AnimatePresence>
 
         <div
-          className="pointer-events-auto mt-10 flex gap-2"
+          className="pointer-events-auto absolute inset-x-4 bottom-4 flex justify-center gap-2 md:inset-x-8 md:bottom-6"
           role="group"
           aria-label="Hero slides"
         >
           {SLIDES.map((s, i) => (
             <button
-              key={s.image}
+              key={s.imageDesktop}
               type="button"
               aria-label={`Go to slide ${i + 1} of ${SLIDES.length}`}
               aria-current={i === index}
