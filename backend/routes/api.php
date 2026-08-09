@@ -30,8 +30,11 @@ Route::post('webhooks/paystack', [PaystackWebhookController::class, 'handle'])
 
 // Public catalog — no auth required. Rate-limited since it's unauthenticated
 // and publicly reachable (search in particular runs a query across 3 columns
-// per request); same per-IP limit as the webhook route.
-Route::middleware('throttle:60,1')->group(function () {
+// per request). Higher ceiling than the webhook route: the frontend is SSR,
+// so every visitor's page load is proxied through the frontend server's one
+// IP — a single home page load alone fires several of these — meaning this
+// limit is really "site-wide requests per minute," not "per real visitor."
+Route::middleware('throttle:300,1')->group(function () {
     Route::get('categories', [CatalogController::class, 'categories']);
     Route::get('products', [CatalogController::class, 'products']);
     Route::get('products/{product}', [CatalogController::class, 'show']);

@@ -16,8 +16,8 @@ it('lists categories ordered by sort_order with camelCase keys', function () {
     $response->assertJsonStructure(['data' => [['id', 'name', 'slug', 'description', 'imageUrl', 'sortOrder']]]);
 });
 
-it('rate-limits the public catalog endpoint at 60 requests per minute', function () {
-    for ($i = 0; $i < 60; $i++) {
+it('rate-limits the public catalog endpoint at 300 requests per minute', function () {
+    for ($i = 0; $i < 300; $i++) {
         $this->getJson('/api/v1/products')->assertOk();
     }
 
