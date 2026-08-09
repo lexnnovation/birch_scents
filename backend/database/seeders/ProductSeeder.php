@@ -736,30 +736,16 @@ class ProductSeeder extends Seeder
             // ----------------------------- Birch Vase ------------------------------
             [
                 'categorySlug' => 'birch-vase',
-                'name' => 'The Ashwood Vase',
-                'slug' => 'ashwood-vase',
+                'name' => 'Birch Vase',
+                'slug' => 'birch-vase-standard',
                 'tagline' => 'A vessel worth keeping',
-                'description' => 'Hand-glazed stoneware in a warm ashwood finish, sized for our 100ml reed diffuser refills — as beautiful empty as it is full.',
+                'description' => 'Hand-glazed stoneware sized for our 100ml reed diffuser refills — as beautiful empty as it is full.',
                 'scent_notes' => 'Fits all Birchscents 100ml reed diffuser refills',
                 'gallery' => [],
                 'is_featured' => false,
                 'is_active' => true,
                 'variants' => [
-                    ['sku' => 'BS-BV-ASH-STD', 'label' => 'Standard', 'price_pesewas' => 12000, 'compare_at_pesewas' => null, 'stock' => 24, 'is_active' => true],
-                ],
-            ],
-            [
-                'categorySlug' => 'birch-vase',
-                'name' => 'The Ivory Stone Vase',
-                'slug' => 'ivory-stone-vase',
-                'tagline' => 'Clean and considered',
-                'description' => 'A matte ivory stoneware vessel with a soft, tactile finish — pairs with any Birchscents reed diffuser refill.',
-                'scent_notes' => 'Fits all Birchscents 100ml reed diffuser refills',
-                'gallery' => [],
-                'is_featured' => false,
-                'is_active' => true,
-                'variants' => [
-                    ['sku' => 'BS-BV-IVR-STD', 'label' => 'Standard', 'price_pesewas' => 13000, 'compare_at_pesewas' => null, 'stock' => 20, 'is_active' => true],
+                    ['sku' => 'BS-BV-VAS-STD', 'label' => 'Standard', 'price_pesewas' => 12000, 'compare_at_pesewas' => null, 'stock' => 24, 'is_active' => true],
                 ],
             ],
 
