@@ -125,7 +125,7 @@ export function Hero() {
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/25 via-black/5 to-black/30" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/40 via-black/10 to-transparent" />
 
-      <div className="pointer-events-none relative mx-auto flex min-h-[560px] max-w-310 flex-col items-center justify-start px-4 pt-16 pb-24 text-center text-white md:h-full md:min-h-0 md:items-start md:justify-center md:px-8 md:pt-16 md:pb-32 md:text-left">
+      <div className="pointer-events-none relative mx-auto flex min-h-[560px] max-w-310 flex-col items-center justify-start px-4 pt-10 pb-24 text-center text-white md:h-full md:min-h-0 md:items-start md:justify-center md:px-8 md:pt-16 md:pb-32 md:text-left">
         <AnimatePresence mode="wait">
           <motion.div
             key={slide.headline}
@@ -140,7 +140,7 @@ export function Hero() {
             <h1 className="mt-4 max-w-[16ch] text-4xl leading-[1.05] font-extrabold text-balance md:text-6xl">
               {slide.headline}
             </h1>
-            <div className="pointer-events-auto mt-8">
+            <div className="pointer-events-auto mt-4">
               <Button
                 asChild
                 variant="brand"
