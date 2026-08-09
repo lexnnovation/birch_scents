@@ -7,13 +7,15 @@ import { getCategoryImages } from "@/lib/placeholder";
 import { cn } from "@/lib/utils";
 
 /**
- * Gallery. Prefers real per-product photography (`product.gallery`) once the
- * admin dashboard can set it; until then, cycles the category's meantime
- * reference photo(s) to fill 4 panels.
+ * Gallery. Prefers real per-product photography (`imageUrl` as the hero,
+ * followed by `gallery`) — shows every real photo the product has, however
+ * many that is. Falls back to the category's meantime reference photo(s),
+ * cycled to fill 4 panels, only when a product has no photography yet.
  */
 export function ProductGallery({ product }: { product: Product }) {
-  const source = product.gallery.length > 0 ? product.gallery : getCategoryImages(product.categorySlug);
-  const panels = Array.from({ length: 4 }, (_, i) => source[i % source.length]);
+  const own = [product.imageUrl, ...product.gallery].filter((src): src is string => Boolean(src));
+  const source = own.length > 0 ? own : getCategoryImages(product.categorySlug);
+  const panels = own.length > 0 ? source : Array.from({ length: 4 }, (_, i) => source[i % source.length]);
   const [active, setActive] = useState(0);
   // Hover/focus previews a thumbnail without changing the persisted selection —
   // clears back to `active` the moment the mouse leaves (or focus moves away).
