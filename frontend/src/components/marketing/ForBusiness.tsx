@@ -14,7 +14,12 @@ export function ForBusiness() {
           space and we&rsquo;ll craft the right atmosphere.
         </p>
         <div className="mt-8">
-          <Button asChild variant="brand" size="pill">
+          <Button
+            asChild
+            variant="brand"
+            size="pill"
+            className="hover:bg-background hover:text-foreground"
+          >
             <a href="mailto:hello@birchscents.com?subject=Business%20enquiry">Talk to our team</a>
           </Button>
         </div>

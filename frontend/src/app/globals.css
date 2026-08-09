@@ -86,16 +86,16 @@
   --accent: #efede7; /* neutral hover surface (NOT the brand green) */
   --accent-foreground: #161513;
 
-  --brand: #1f7a52; /* refined leaf green — the single accent */
-  --brand-foreground: #ffffff;
-  --success: #1f7a52; /* sale / discount pills */
+  --brand: #e4a628; /* Snow Melon label gold — the single accent */
+  --brand-foreground: #161513;
+  --success: #1f7a52; /* sale / discount pills — distinct from the brand accent on purpose */
   --success-foreground: #ffffff;
 
   --destructive: #c0392b;
 
   --border: #e7e5e0;
   --input: #e7e5e0;
-  --ring: #1f7a52; /* on-brand focus ring */
+  --ring: #e4a628; /* on-brand focus ring */
 
   --radius: 0.75rem;
 
@@ -106,7 +106,7 @@
   --sidebar-accent: #f2f1ed;
   --sidebar-accent-foreground: #161513;
   --sidebar-border: #e7e5e0;
-  --sidebar-ring: #1f7a52;
+  --sidebar-ring: #e4a628;
 
   --chart-1: #1f7a52;
   --chart-2: #6e6b66;
@@ -137,7 +137,7 @@
   --accent: #2c2a22;
   --accent-foreground: #f1eee6;
 
-  --brand: #3fa576;
+  --brand: #f0b93e;
   --brand-foreground: #14130f;
   --success: #3fa576;
   --success-foreground: #14130f;
@@ -146,7 +146,7 @@
 
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: #3fa576;
+  --ring: #f0b93e;
 
   --sidebar: #1c1a15;
   --sidebar-foreground: #f1eee6;
@@ -155,7 +155,7 @@
   --sidebar-accent: #26241d;
   --sidebar-accent-foreground: #f1eee6;
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: #3fa576;
+  --sidebar-ring: #f0b93e;
 
   --chart-1: #3fa576;
   --chart-2: #a8a296;

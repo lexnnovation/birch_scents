@@ -44,7 +44,7 @@ export function CartDrawer() {
                   {formatPesewas(cartSubtotal(list))}
                 </span>
               </div>
-              <Button asChild size="pill" className="w-full" onClick={closeCart}>
+              <Button asChild variant="brand" size="pill" className="w-full" onClick={closeCart}>
                 <Link href="/checkout">Checkout</Link>
               </Button>
               <Button asChild variant="outline" size="pill" className="w-full" onClick={closeCart}>

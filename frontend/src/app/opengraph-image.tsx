@@ -40,7 +40,7 @@ export default async function OpengraphImage() {
             marginTop: 20,
             fontSize: 30,
             fontWeight: 500,
-            color: "#1f7a52",
+            color: "#e4a628",
           }}
         >
           Inhale and Feel the Difference

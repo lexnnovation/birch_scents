@@ -10,7 +10,7 @@ export default function NotFound() {
         We couldn&rsquo;t find what you were looking for — it may have moved or sold out.
       </p>
       <div className="mt-8 flex gap-3">
-        <Button asChild size="pill">
+        <Button asChild variant="brand" size="pill">
           <Link href="/shop">Shop fragrances</Link>
         </Button>
         <Button asChild variant="outline" size="pill">

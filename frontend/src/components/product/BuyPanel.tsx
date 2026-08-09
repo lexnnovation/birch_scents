@@ -107,7 +107,7 @@ export function BuyPanel({ product }: { product: Product }) {
             <Plus className="size-4" />
           </button>
         </div>
-        <Button size="pill" className="flex-1" disabled={outOfStock} onClick={add}>
+        <Button variant="brand" size="pill" className="flex-1" disabled={outOfStock} onClick={add}>
           {outOfStock ? "Out of stock" : "Add to cart"}
         </Button>
       </div>

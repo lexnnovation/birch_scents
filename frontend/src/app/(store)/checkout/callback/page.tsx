@@ -102,7 +102,7 @@ function PollingView({ orderNumber }: { orderNumber: string }) {
           confirmed — check My Orders shortly.
         </p>
         <div className="mt-6 flex justify-center gap-3">
-          <Button asChild size="pill">
+          <Button asChild variant="brand" size="pill">
             <Link href="/orders">My orders</Link>
           </Button>
           <Button asChild variant="outline" size="pill">
@@ -130,7 +130,7 @@ function NotFoundView() {
         If you completed payment, check your order history — it may just take a moment to appear.
       </p>
       <div className="mt-6 flex justify-center gap-3">
-        <Button asChild size="pill">
+        <Button asChild variant="brand" size="pill">
           <Link href="/orders">My orders</Link>
         </Button>
         <Button asChild variant="outline" size="pill">

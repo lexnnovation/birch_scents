@@ -30,7 +30,7 @@ export default function StoreError({
         This page didn&rsquo;t load properly. Please try again in a moment.
       </p>
       <div className="mt-8 flex gap-3">
-        <Button size="pill" onClick={() => unstable_retry()}>
+        <Button variant="brand" size="pill" onClick={() => unstable_retry()}>
           Try again
         </Button>
         <Button asChild variant="outline" size="pill">

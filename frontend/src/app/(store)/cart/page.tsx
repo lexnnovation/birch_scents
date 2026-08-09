@@ -40,7 +40,7 @@ export default function CartPage() {
               </span>
             </div>
             <p className="text-muted-foreground mt-1 text-xs">Delivery calculated at checkout.</p>
-            <Button asChild size="pill" className="mt-6 w-full">
+            <Button asChild variant="brand" size="pill" className="mt-6 w-full">
               <Link href="/checkout">Checkout</Link>
             </Button>
           </aside>

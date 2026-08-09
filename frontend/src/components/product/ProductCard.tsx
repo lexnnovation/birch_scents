@@ -191,6 +191,7 @@ function QuickAdd({ product }: { product: Product }) {
       <div className="flex flex-col gap-2 md:flex-row">
         <Button
           type="button"
+          variant="brand"
           size="sm"
           className="h-auto flex-1 rounded-full px-4 py-2 tracking-wide uppercase"
           onClick={() => add(product.variants[0])}
@@ -208,6 +209,7 @@ function QuickAdd({ product }: { product: Product }) {
         <PopoverTrigger asChild>
           <Button
             type="button"
+            variant="brand"
             size="sm"
             className="h-auto flex-1 rounded-full px-4 py-2 tracking-wide uppercase"
           >
@@ -240,7 +242,7 @@ function QuickAdd({ product }: { product: Product }) {
               );
             })}
           </div>
-          <Button size="pill" className="mt-3 w-full" onClick={() => add(variant)}>
+          <Button variant="brand" size="pill" className="mt-3 w-full" onClick={() => add(variant)}>
             Add to cart
           </Button>
         </PopoverContent>

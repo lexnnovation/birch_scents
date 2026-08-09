@@ -122,7 +122,7 @@ export default function ConfirmationPage() {
       </div>
 
       <div className="mt-8 flex justify-center gap-3">
-        <Button asChild size="pill">
+        <Button asChild variant="brand" size="pill">
           <Link href="/orders">My orders</Link>
         </Button>
         <Button asChild variant="outline" size="pill">

@@ -256,7 +256,7 @@ function CheckoutForm({ items, profile }: { items: CartItem[]; profile: UserProf
               )}
             </div>
           )}
-          <Button type="submit" size="pill" className="mt-6 w-full" disabled={placing}>
+          <Button type="submit" variant="brand" size="pill" className="mt-6 w-full" disabled={placing}>
             {placing ? "Opening payment…" : "Place order"}
           </Button>
           <p className="text-muted-foreground mt-3 text-center text-xs">

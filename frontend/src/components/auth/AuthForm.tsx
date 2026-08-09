@@ -113,7 +113,7 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo: string 
           We&rsquo;ve sent a confirmation link to <strong>{form.email.trim()}</strong>. Confirm your
           address, then sign in to continue.
         </p>
-        <Button asChild size="pill" className="mt-6 w-full">
+        <Button asChild variant="brand" size="pill" className="mt-6 w-full">
           <Link href={{ pathname: "/login", query: target === "/" ? undefined : { redirectTo: target } }}>
             Go to sign in
           </Link>
@@ -164,7 +164,7 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo: string 
             {formError}
           </p>
         )}
-        <Button type="submit" size="pill" className="mt-2 w-full" disabled={submitting}>
+        <Button type="submit" variant="brand" size="pill" className="mt-2 w-full" disabled={submitting}>
           {submitting ? "Please wait…" : copy.submit}
         </Button>
       </form>

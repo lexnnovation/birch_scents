@@ -240,6 +240,7 @@ function SizedProductCard({ product, size }: { product: Product; size: VariantLa
       <div className="mt-1.5 flex flex-col gap-2 md:flex-row">
         <Button
           type="button"
+          variant="brand"
           size="sm"
           disabled={!available}
           onClick={add}

@@ -145,7 +145,7 @@ function ProfileForm({
         <Field id="city" label="City" value={form.city} onChange={set("city")} />
       </div>
 
-      <Button type="submit" size="pill" className="mt-8" disabled={saving}>
+      <Button type="submit" variant="brand" size="pill" className="mt-8" disabled={saving}>
         {saving ? "Saving…" : "Save"}
       </Button>
     </form>
