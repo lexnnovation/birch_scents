@@ -104,7 +104,10 @@ function SizeTab({
 }
 
 function SizedProductGrid({ products, size }: { products: Product[]; size: VariantLabel }) {
-  if (products.length === 0) {
+  // Only scents that actually come in this size — a product with no matching
+  // variant doesn't belong in this view at all, not shown as "out of stock".
+  const inSize = products.filter((p) => p.variants.some((v) => v.label === size));
+  if (inSize.length === 0) {
     return (
       <p className="text-muted-foreground py-20 text-center">
         No products here yet — check back soon.
@@ -113,7 +116,7 @@ function SizedProductGrid({ products, size }: { products: Product[]; size: Varia
   }
   return (
     <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 lg:grid-cols-4">
-      {products.map((p) => (
+      {inSize.map((p) => (
         <SizedProductCard key={p.id} product={p} size={size} />
       ))}
     </div>
@@ -145,6 +148,7 @@ function SizedProductCard({ product, size }: { product: Product; size: VariantLa
   const variant = product.variants.find((v) => v.label === size);
   const available = !!variant && variant.isActive && variant.stock > 0;
   const reducedMotion = useReducedMotion();
+  const hoverImage = product.gallery[0] ?? null;
 
   // Falls back to the product's own cheapest price when it doesn't come in
   // this size at all, so every card in the row shows a price and stays
@@ -191,6 +195,16 @@ function SizedProductCard({ product, size }: { product: Product; size: VariantLa
               available ? "group-hover:scale-[1.04]" : "opacity-40",
             )}
           />
+          {hoverImage && available && (
+            <Image
+              src={hoverImage}
+              alt=""
+              aria-hidden="true"
+              fill
+              sizes="(min-width: 1024px) 23vw, (min-width: 768px) 31vw, 47vw"
+              className="object-cover opacity-0 transition-opacity duration-300 group-hover:scale-[1.04] group-hover:opacity-100 motion-reduce:transition-none"
+            />
+          )}
           {product.isFeatured && available && (
             <span className="bg-primary text-primary-foreground absolute top-2.5 left-2.5 rounded-md px-2 py-1 text-[9px] font-semibold tracking-[0.12em] uppercase">
               Flagship
