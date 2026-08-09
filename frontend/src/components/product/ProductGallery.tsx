@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useReducedMotion } from "framer-motion";
 import type { Product } from "@/types";
 import { getCategoryImages } from "@/lib/placeholder";
 import { cn } from "@/lib/utils";
@@ -21,17 +22,36 @@ export function ProductGallery({ product }: { product: Product }) {
   // clears back to `active` the moment the mouse leaves (or focus moves away).
   const [hovered, setHovered] = useState<number | null>(null);
   const displayed = hovered ?? active;
+  const reducedMotion = useReducedMotion();
+  const [zoomed, setZoomed] = useState(false);
+  const [origin, setOrigin] = useState("50% 50%");
+
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setOrigin(`${x}% ${y}%`);
+  }
 
   return (
     <div>
-      <div className="relative aspect-square w-full overflow-hidden rounded-2xl">
+      <div
+        className="relative aspect-square w-full cursor-zoom-in overflow-hidden rounded-2xl"
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setZoomed(true)}
+        onMouseLeave={() => setZoomed(false)}
+      >
         <Image
           src={panels[displayed]}
           alt={product.name}
           fill
           priority
           sizes="(min-width: 768px) 46vw, 100vw"
-          className="object-cover"
+          className={cn(
+            "object-cover transition-transform duration-300 ease-out motion-reduce:transition-none",
+            zoomed && !reducedMotion && "scale-[1.6]",
+          )}
+          style={{ transformOrigin: origin }}
         />
       </div>
       <div className="mt-3 grid grid-cols-4 gap-3">
