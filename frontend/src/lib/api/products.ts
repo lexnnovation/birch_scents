@@ -16,11 +16,12 @@ export function getProducts(params: GetProductsParams = {}): Promise<Paginated<P
 
   return apiFetch<Paginated<Product>>("/products", {
     params: { category: categorySlug, featured, search, page, perPage },
+    revalidate: 60,
   });
 }
 
 export function getProductBySlug(slug: string): Promise<Product | null> {
-  return apiFetch<{ data: Product }>(`/products/${slug}`)
+  return apiFetch<{ data: Product }>(`/products/${slug}`, { revalidate: 60 })
     .then((res) => res.data)
     .catch((error: ApiError) => {
       if (error.status === 404) return null;

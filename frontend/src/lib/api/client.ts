@@ -28,6 +28,12 @@ export interface RequestOptions {
   /** Query params appended to the URL. */
   params?: Record<string, string | number | boolean | undefined>;
   signal?: AbortSignal;
+  /**
+   * Seconds before Next's fetch cache revalidates. Omit for authenticated,
+   * per-user, or mutating requests — those must always be fresh (no-store).
+   * Only public, non-personalized reads (catalog) should set this.
+   */
+  revalidate?: number;
 }
 
 function buildUrl(path: string, params?: RequestOptions["params"]): string {
@@ -41,7 +47,7 @@ function buildUrl(path: string, params?: RequestOptions["params"]): string {
 }
 
 export async function apiFetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = "GET", body, params, signal } = options;
+  const { method = "GET", body, params, signal, revalidate } = options;
   const token = await getAccessToken();
 
   let response: Response;
@@ -55,6 +61,7 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: body ? JSON.stringify(body) : undefined,
+      ...(revalidate === undefined ? { cache: "no-store" } : { next: { revalidate } }),
     });
   } catch {
     // The request never reached a response at all (offline, DNS failure,

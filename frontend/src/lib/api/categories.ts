@@ -4,7 +4,7 @@ import { apiFetch } from "./client";
 /** Category reads — the backend already returns them sorted by sortOrder. */
 
 export function getCategories(): Promise<Category[]> {
-  return apiFetch<{ data: Category[] }>("/categories").then((res) => res.data);
+  return apiFetch<{ data: Category[] }>("/categories", { revalidate: 60 }).then((res) => res.data);
 }
 
 export function getCategoryBySlug(slug: string): Promise<Category | null> {
