@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 | (CLAUDE.md §6). Money/stock are always re-validated server-side.
 */
 
-Route::get('health', HealthController::class)->name('health');
+Route::get('health', HealthController::class)->middleware('throttle:60,1')->name('health');
 
 // Paystack webhook — outside auth entirely (Paystack, not a browser, calls
 // this), HMAC-verified inside the controller, rate-limited (CLAUDE.md §9).
