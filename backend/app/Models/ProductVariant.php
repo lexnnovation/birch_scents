@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Observers\CatalogCacheObserver;
 use Database\Factories\ProductVariantFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'stock',
     'is_active',
 ])]
+#[ObservedBy(CatalogCacheObserver::class)]
 class ProductVariant extends Model
 {
     /** @use HasFactory<ProductVariantFactory> */

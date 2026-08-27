@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Observers\CatalogCacheObserver;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'is_featured',
     'is_active',
 ])]
+#[ObservedBy(CatalogCacheObserver::class)]
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
